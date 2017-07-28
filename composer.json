@@ -1,0 +1,24 @@
+{
+    "name": "ausi/slug-generator",
+    "type": "library",
+    "description": "Slug Generator",
+    "license": "MIT",
+    "keywords": ["slug", "slugify", "slug-generator"],
+    "authors": [
+        {
+            "name": "Martin Auswöger",
+            "email": "martin@auswoeger.com"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "ext-intl": "*",
+        "ext-mbstring": "*",
+        "ext-pcre": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ausi\\SlugGenerator\\": "src/"
+        }
+    }
+}
