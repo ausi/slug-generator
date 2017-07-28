@@ -1,0 +1,34 @@
+language: php
+
+git:
+  depth: 1
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+sudo: false
+
+env:
+  global:
+    - COMPOSER_ALLOW_XDEBUG=0
+
+matrix:
+  include:
+    - php: 7.1
+      env: COVERAGE='--coverage-clover build/logs/clover.xml'
+    - php: 7.2
+      env: COMPOSER_FLAGS='--ignore-platform-reqs'
+
+before_install:
+  - composer selfupdate
+
+before_script:
+  - travis_wait composer update $COMPOSER_FLAGS --no-interaction
+
+script:
+  - if [[ $COVERAGE ]]; then mkdir -p build/logs; fi
+  - php vendor/bin/phpunit $COVERAGE
+
+after_script:
+  - if [[ $COVERAGE ]]; then php vendor/bin/coveralls; fi
