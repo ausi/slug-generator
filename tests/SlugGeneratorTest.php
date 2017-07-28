@@ -158,7 +158,11 @@ class SlugGeneratorTest extends TestCase
 				'dont-theyre',
 				['ignore' => '’\''],
 			],
-			['фильм', 'film'],
+			[
+				'фильм',
+				'film',
+				['ignore' => '\p{Mn}\p{Lm}\pP'],
+			],
 			['Україна', 'ukraina'],
 			['０ １ ９ ⑽ ⒒ ¼ Ⅻ', '0-1-9-10-11-1-4-xii'],
 			['Č Ć Ž Š Đ č ć ž š đ', 'c-c-z-s-d-c-c-z-s-d'],
@@ -274,14 +278,6 @@ class SlugGeneratorTest extends TestCase
 			[
 				['öß', 'ASCII', 'de', '/.+/'],
 				'oess',
-			],
-			[
-				['µ', 'Latin', 'pnt', '/.+/'],
-				'm',
-			],
-			[
-				['µ', 'Latin', '', '/.+/'],
-				'µ',
 			],
 		];
 	}
