@@ -1,6 +1,14 @@
 Slug Generator Library
 ======================
 
+[![Build Status](https://img.shields.io/travis/ausi/slug-generator/master.svg?style=flat-square)](https://travis-ci.org/ausi/slug-generator/branches)
+[![Code Quality](https://img.shields.io/scrutinizer/g/ausi/slug-generator/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/ausi/slug-generator/)
+[![Coverage](https://img.shields.io/coveralls/ausi/slug-generator/master.svg?style=flat-square)](https://coveralls.io/github/ausi/slug-generator)
+[![Packagist Version](https://img.shields.io/packagist/v/ausi/slug-generator.svg?style=flat-square)](https://packagist.org/packages/ausi/slug-generator)
+[![Downloads](https://img.shields.io/packagist/dt/ausi/slug-generator.svg?style=flat-square)](https://packagist.org/packages/ausi/slug-generator)
+[![Patreon](https://img.shields.io/badge/Patreon-%24141%2Fmonth-lightgrey.svg?style=flat-square&colorA=F96854&colorB=555555)](https://www.patreon.com/ausi)
+[![MIT License](https://img.shields.io/github/license/ausi/slug-generator.svg?style=flat-square)](https://github.com/ausi/slug-generator/blob/master/LICENSE)
+
 This library provides methods to generate slugs
 for URLs, filenames or any other target that has a limited character set.
 It’s based on PHPs Transliterator class which uses the data of the [CLDR][]
