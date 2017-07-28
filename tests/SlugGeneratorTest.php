@@ -154,6 +154,15 @@ class SlugGeneratorTest extends TestCase
 				['ignore' => 'b'],
 			],
 			[
+				'ABʹC',
+				'abc',
+			],
+			[
+				'ABʹC',
+				'ab-c',
+				['ignore' => ''],
+			],
+			[
 				'Don’t they\'re',
 				'dont-theyre',
 				['ignore' => '’\''],
@@ -194,6 +203,11 @@ class SlugGeneratorTest extends TestCase
 				'-A B C-',
 				'abc',
 				['delimiter' => ''],
+			],
+			[
+				'-A B C-',
+				'',
+				['valid' => ''],
 			],
 		];
 	}
