@@ -1,0 +1,30 @@
+build: false
+shallow_clone: true
+platform: x64
+clone_folder: c:\projects\ausi-slug-generator
+
+cache:
+  - '%LOCALAPPDATA%\Composer\files'
+
+init:
+  - SET PATH=c:\php;%PATH%
+
+install:
+  - mkdir c:\php && cd c:\php
+  - appveyor DownloadFile http://windows.php.net/downloads/releases/archives/php-7.1.6-Win32-VC14-x64.zip
+  - 7z x php-7.1.6-Win32-VC14-x64.zip -y >nul
+  - del *.zip
+  - copy php.ini-production php.ini
+  - echo date.timezone="UTC" >> php.ini
+  - echo extension_dir=ext >> php.ini
+  - echo extension=php_intl.dll >> php.ini
+  - echo extension=php_mbstring.dll >> php.ini
+  - echo extension=php_openssl.dll >> php.ini
+  - echo extension=php_curl.dll >> php.ini
+  - cd c:\projects\ausi-slug-generator
+  - php -r "readfile('http://getcomposer.org/installer');" | php
+  - php composer.phar update --no-progress --no-interaction --ansi
+
+test_script:
+  - cd c:\projects\ausi-slug-generator
+  - vendor\bin\phpunit.bat
