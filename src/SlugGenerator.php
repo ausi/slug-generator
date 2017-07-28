@@ -284,20 +284,23 @@ class SlugGenerator
 	{
 		$rule = $this->fixTransliteratorRule($rule, $locale);
 
-		if ($locale && ($transliterator = \Transliterator::create($locale.'-'.$rule))) {
-			return $transliterator;
+		$candidates = [
+			'Latin-'.$rule,
+			$rule,
+		];
+
+		if ($locale) {
+			array_unshift(
+				$candidates,
+				$locale.'-'.$rule,
+				\Locale::getPrimaryLanguage($locale).'-'.$rule
+			);
 		}
 
-		if ($locale && ($transliterator = \Transliterator::create(\Locale::getPrimaryLanguage($locale).'-'.$rule))) {
-			return $transliterator;
-		}
-
-		if ($transliterator = \Transliterator::create('Latin-'.$rule)) {
-			return $transliterator;
-		}
-
-		if ($transliterator = \Transliterator::create($rule)) {
-			return $transliterator;
+		foreach ($candidates as $candidate) {
+			if ($transliterator = \Transliterator::create($candidate)) {
+				return $transliterator;
+			}
 		}
 
 		if ($transliterator = \Transliterator::createFromRules($rule)) {
