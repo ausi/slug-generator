@@ -16,9 +16,17 @@
         "ext-mbstring": "*",
         "ext-pcre": "*"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^6.2"
+    },
     "autoload": {
         "psr-4": {
             "Ausi\\SlugGenerator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ausi\\SlugGenerator\\Tests\\": "tests/"
         }
     }
 }
