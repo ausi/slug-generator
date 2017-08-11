@@ -292,4 +292,12 @@ class SlugOptionsTest extends TestCase
 			[new \stdClass, \TypeError::class],
 		];
 	}
+
+	public function testUnknownOptionThrows()
+	{
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessageRegExp('(unknown.*"foo")i');
+
+		new SlugOptions(['foo' => 'bar']);
+	}
 }

@@ -63,6 +63,7 @@ class SlugOptions implements \IteratorAggregate
 	public function __construct(iterable $options = [])
 	{
 		foreach ($options as $option => $value) {
+			$this->assertOptionName($option);
 			$this->{'set'.ucfirst($option)}($value);
 		}
 	}
@@ -95,6 +96,7 @@ class SlugOptions implements \IteratorAggregate
 		$merged = clone $this;
 
 		foreach ($options as $option => $value) {
+			$this->assertOptionName($option);
 			$merged->{'set'.ucfirst($option)}($value);
 		}
 
@@ -289,6 +291,28 @@ class SlugOptions implements \IteratorAggregate
 		}
 
 		return $this->setTransforms(array_merge($this->transforms, $transforms));
+	}
+
+	/**
+	 * @param string $option
+	 *
+	 * @throws \InvalidArgumentException If it’s an invalid option name
+	 */
+	private function assertOptionName(string $option): void
+	{
+		static $validOptions = [
+			'delimiter',
+			'valid',
+			'ignore',
+			'locale',
+			'transforms',
+			'preTransforms',
+			'postTransforms',
+		];
+
+		if (!in_array($option, $validOptions, true)) {
+			throw new \InvalidArgumentException(sprintf('Unknown option "%s"', $option));
+		}
 	}
 
 	/**
