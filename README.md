@@ -29,7 +29,7 @@ $generator->generate('國語');           // Output: guo-yu
 
 // Different valid character set, a specified locale and a delimiter
 $generator = new SlugGenerator((new SlugOptions)
-    ->setValid('a-zA-Z0-9')
+    ->setValidChars('a-zA-Z0-9')
     ->setLocale('de')
     ->setDelimiter('_')
 );
@@ -75,26 +75,26 @@ $generator->generate('Hello World!', ['delimiter' => '_']);   // Result: hello_w
 $generator->generate('Hello World!', ['delimiter' => '%20']); // Result: hello%20world
 ```
 
-### `valid`, default `"a-z0-9"`
+### `validChars`, default `"a-z0-9"`
 
 Valid characters that are allowed in the slug.
 The [range syntax][] is the same as in character classes of regular expressions.
 For example `abc`, `a-z0-9äöüß` or `\p{Ll}\-_`.
 
 ```php
-$generator->generate('Hello World!');                        // Result: hello-world
-$generator->generate('Hello World!', ['valid' => 'A-Z']);    // Result: HELLO-WORLD
-$generator->generate('Hello World!', ['valid' => 'A-Za-z']); // Result: Hello-World
+$generator->generate('Hello World!');                             // Result: hello-world
+$generator->generate('Hello World!', ['validChars' => 'A-Z']);    // Result: HELLO-WORLD
+$generator->generate('Hello World!', ['validChars' => 'A-Za-z']); // Result: Hello-World
 ```
 
-### `ignore`, default `"\p{Mn}\p{Lm}"`
+### `ignoreChars`, default `"\p{Mn}\p{Lm}"`
 
 Characters that should be completely removed and not replaced with a delimiter.
-It uses the same syntax as the `valid` option.
+It uses the same syntax as the `validChars` option.
 
 ```php
-$generator->generate("don't remove");                    // Result: don-t-remove
-$generator->generate("don't remove", ["ignore' => "'"]); // Result: dont-remove
+$generator->generate("don't remove");                         // Result: don-t-remove
+$generator->generate("don't remove", ["ignoreChars' => "'"]); // Result: dont-remove
 ```
 
 ### `locale`, default `""`
