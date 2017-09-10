@@ -78,15 +78,15 @@ class SlugGenerator
 
 		$options = $this->options->merge($options);
 
-		if ($options->getValid() === '') {
+		if ($options->getValidChars() === '') {
 			return '';
 		}
 
 		$text = \Normalizer::normalize($text, \Normalizer::FORM_C);
-		$text = $this->removeIgnored($text, $options->getIgnore());
-		$text = $this->transform($text, $options->getValid(), $options->getTransforms(), $options->getLocale());
-		$text = $this->removeIgnored($text, $options->getIgnore());
-		$text = $this->replaceWithDelimiter($text, $options->getValid(), $options->getDelimiter());
+		$text = $this->removeIgnored($text, $options->getIgnoreChars());
+		$text = $this->transform($text, $options->getValidChars(), $options->getTransforms(), $options->getLocale());
+		$text = $this->removeIgnored($text, $options->getIgnoreChars());
+		$text = $this->replaceWithDelimiter($text, $options->getValidChars(), $options->getDelimiter());
 
 		return $text;
 	}

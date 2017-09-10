@@ -28,12 +28,12 @@ class SlugOptions implements \IteratorAggregate
 	/**
 	 * @var string
 	 */
-	private $valid = 'a-z0-9';
+	private $validChars = 'a-z0-9';
 
 	/**
 	 * @var string
 	 */
-	private $ignore = '\p{Mn}\p{Lm}';
+	private $ignoreChars = '\p{Mn}\p{Lm}';
 
 	/**
 	 * @var string
@@ -125,18 +125,18 @@ class SlugOptions implements \IteratorAggregate
 	}
 
 	/**
-	 * @param string $valid Character range for allowed characters
+	 * @param string $chars Character range for allowed characters
 	 *                      in the form of a regular expression character set,
 	 *                      e.g. `abc`, `a-z0-9` or `\p{Ll}\-_`
 	 *
 	 * @return static
 	 */
-	public function setValid(string $valid): self
+	public function setValidChars(string $chars): self
 	{
-		$this->assertCharacterClass($valid);
+		$this->assertCharacterClass($chars);
 
-		$this->valid = $valid;
-		$this->setOptions['valid'] = null;
+		$this->validChars = $chars;
+		$this->setOptions['validChars'] = null;
 
 		return $this;
 	}
@@ -144,24 +144,24 @@ class SlugOptions implements \IteratorAggregate
 	/**
 	 * @return string
 	 */
-	public function getValid(): string
+	public function getValidChars(): string
 	{
-		return $this->valid;
+		return $this->validChars;
 	}
 
 	/**
-	 * @param string $ignore Range of characters that get ignored
-	 *                       in the form of a regular expression character set,
-	 *                       e.g. `abc`, `a-z0-9` or `\p{Ll}\-_`
+	 * @param string $chars Range of characters that get ignored
+	 *                      in the form of a regular expression character set,
+	 *                      e.g. `abc`, `a-z0-9` or `\p{Ll}\-_`
 	 *
 	 * @return static
 	 */
-	public function setIgnore(string $ignore): self
+	public function setIgnoreChars(string $chars): self
 	{
-		$this->assertCharacterClass($ignore);
+		$this->assertCharacterClass($chars);
 
-		$this->ignore = $ignore;
-		$this->setOptions['ignore'] = null;
+		$this->ignoreChars = $chars;
+		$this->setOptions['ignoreChars'] = null;
 
 		return $this;
 	}
@@ -169,9 +169,9 @@ class SlugOptions implements \IteratorAggregate
 	/**
 	 * @return string
 	 */
-	public function getIgnore(): string
+	public function getIgnoreChars(): string
 	{
-		return $this->ignore;
+		return $this->ignoreChars;
 	}
 
 	/**
@@ -302,8 +302,8 @@ class SlugOptions implements \IteratorAggregate
 	{
 		static $validOptions = [
 			'delimiter',
-			'valid',
-			'ignore',
+			'validChars',
+			'ignoreChars',
 			'locale',
 			'transforms',
 			'preTransforms',

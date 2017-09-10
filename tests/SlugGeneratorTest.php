@@ -64,41 +64,41 @@ class SlugGeneratorTest extends TestCase
 				'Ö Äpfel-Fuß',
 				'OE-Aepfel-Fuss',
 				//'OE-AEpfel-Fuss',
-				['valid' => 'a-zA-Z', 'locale' => 'de'],
+				['validChars' => 'a-zA-Z', 'locale' => 'de'],
 			],
 			[
 				'Ö Ä Ü ẞ ÖX ÄX ÜX ẞX Öx Äx Üx ẞx Öö Ää Üü ẞß',
 				'OE-AE-UE-SS-OEX-AEX-UEX-SSX-Oex-Aex-Uex-SSx-Oeoe-Aeae-Ueue-SSss',
 				//'OE-AE-UE-SS-OEX-AEX-UEX-SSX-OEx-AEx-UEx-SSx-Oeoe-Aeae-Ueue-SSss',
-				['valid' => 'a-zA-Z', 'locale' => 'de'],
+				['validChars' => 'a-zA-Z', 'locale' => 'de'],
 			],
 			[
 				"O\u{308} A\u{308} U\u{308} O\u{308}X A\u{308}X U\u{308}X O\u{308}x A\u{308}x U\u{308}x O\u{308}o\u{308} A\u{308}a\u{308} U\u{308}u\u{308}",
 				'OE-AE-UE-OEX-AEX-UEX-Oex-Aex-Uex-Oeoe-Aeae-Ueue',
 				//'OE-AE-UE-OEX-AEX-UEX-OEx-AEx-UEx-Oeoe-Aeae-Ueue',
-				['valid' => 'a-zA-Z', 'locale' => 'de'],
+				['validChars' => 'a-zA-Z', 'locale' => 'de'],
 			],
 			[
 				'Ö Äpfel-Fuß',
 				'ö-äpfel-fuß',
-				['valid' => 'a-zäöüß'],
+				['validChars' => 'a-zäöüß'],
 			],
 			[
 				'ö-äpfel-fuß',
 				'OE__AEPFEL__FUSS',
-				['valid' => 'A-Z', 'delimiter' => '__', 'locale' => 'de'],
+				['validChars' => 'A-Z', 'delimiter' => '__', 'locale' => 'de'],
 			],
 			['İNATÇI', 'inatci'],
 			[
 				'inatçı',
 				'INATCI',
-				['valid' => 'A-Z'],
+				['validChars' => 'A-Z'],
 			],
 			[
 				'İNATÇI',
 				'inatçı',
 				[
-					'valid' => 'a-pr-vyzçğıöşü', // Turkish alphabet
+					'validChars' => 'a-pr-vyzçğıöşü', // Turkish alphabet
 					'locale' => 'tr',
 				],
 			],
@@ -106,7 +106,7 @@ class SlugGeneratorTest extends TestCase
 				'inatçı',
 				'İNATÇI',
 				[
-					'valid' => 'A-PR-VYZÇĞİÖŞÜ', // Turkish alphabet
+					'validChars' => 'A-PR-VYZÇĞİÖŞÜ', // Turkish alphabet
 					'locale' => 'tr',
 				],
 			],
@@ -126,32 +126,32 @@ class SlugGeneratorTest extends TestCase
 			[
 				'富士山',
 				'fù-shì-shān',
-				['valid' => '\p{Latin}'],
+				['validChars' => '\p{Latin}'],
 			],
 			[
 				'Exämle <!-- % {{BR}} --> <a href="http://example.com">',
 				'exämle-br-a-href-http-example-com',
-				['valid' => '\p{Ll}'],
+				['validChars' => '\p{Ll}'],
 			],
 			[
 				'Exämle <!-- % {{BR}} --> <a href="http://example.com">',
 				'EXÄMLE-BR-A-HREF-HTTP-EXAMPLE-COM',
-				['valid' => '\p{Lu}'],
+				['validChars' => '\p{Lu}'],
 			],
 			[
 				'ǈ ǋ ǲ',
 				'lj-nj-dz',
-				['valid' => '\p{Ll}'],
+				['validChars' => '\p{Ll}'],
 			],
 			[
 				'ǈ ǋ ǲ',
 				'LJ-NJ-DZ',
-				['valid' => '\p{Lu}'],
+				['validChars' => '\p{Lu}'],
 			],
 			[
 				'ABC',
 				'ac',
-				['ignore' => 'b'],
+				['ignoreChars' => 'b'],
 			],
 			[
 				'ABʹC',
@@ -160,17 +160,17 @@ class SlugGeneratorTest extends TestCase
 			[
 				'ABʹC',
 				'ab-c',
-				['ignore' => ''],
+				['ignoreChars' => ''],
 			],
 			[
 				'Don’t they\'re',
 				'dont-theyre',
-				['ignore' => '’\''],
+				['ignoreChars' => '’\''],
 			],
 			[
 				'фильм',
 				'film',
-				['ignore' => '\p{Mn}\p{Lm}\pP'],
+				['ignoreChars' => '\p{Mn}\p{Lm}\pP'],
 			],
 			['Україна', 'ukraina'],
 			['０ １ ９ ⑽ ⒒ ¼ Ⅻ', '0-1-9-10-11-1-4-xii'],
@@ -180,7 +180,7 @@ class SlugGeneratorTest extends TestCase
 				'abc',
 				'1b3',
 				[
-					'valid' => 'b\d',
+					'validChars' => 'b\d',
 					'transforms' => ['a > 1; b > 1; c > 3;'],
 				],
 			],
@@ -207,7 +207,7 @@ class SlugGeneratorTest extends TestCase
 			[
 				'-A B C-',
 				'',
-				['valid' => ''],
+				['validChars' => ''],
 			],
 		];
 	}

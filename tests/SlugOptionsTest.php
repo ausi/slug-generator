@@ -33,13 +33,13 @@ class SlugOptionsTest extends TestCase
 		$options = (new SlugOptions)->merge(new SlugOptions(['delimiter' => 'x']));
 
 		$this->assertSame('x', $options->getDelimiter());
-		$this->assertSame('a-z0-9', $options->getValid());
+		$this->assertSame('a-z0-9', $options->getValidChars());
 
-		$options2 = $options->merge(new SlugOptions(['valid' => 'x']));
+		$options2 = $options->merge(new SlugOptions(['validChars' => 'x']));
 		$this->assertSame('x', $options->getDelimiter());
-		$this->assertSame('a-z0-9', $options->getValid());
+		$this->assertSame('a-z0-9', $options->getValidChars());
 		$this->assertSame('x', $options2->getDelimiter());
-		$this->assertSame('x', $options2->getValid());
+		$this->assertSame('x', $options2->getValidChars());
 	}
 
 	public function testGetIterator()
@@ -53,8 +53,8 @@ class SlugOptionsTest extends TestCase
 		$options->setDelimiter('-');
 		$this->assertSame(['delimiter' => '-'], iterator_to_array($options));
 
-		$options->setValid('x');
-		$this->assertSame(['delimiter' => '-', 'valid' => 'x'], iterator_to_array($options));
+		$options->setValidChars('x');
+		$this->assertSame(['delimiter' => '-', 'validChars' => 'x'], iterator_to_array($options));
 	}
 
 	public function testSetDelimiter()
@@ -69,20 +69,20 @@ class SlugOptionsTest extends TestCase
 		$this->assertSame('xx', $options->setDelimiter('xx')->getDelimiter());
 	}
 
-	public function testSetValid()
+	public function testSetValidChars()
 	{
 		$options = new SlugOptions;
-		$this->assertSame('a-z0-9', $options->getValid());
+		$this->assertSame('a-z0-9', $options->getValidChars());
 
-		$options = new SlugOptions(['valid' => 'x']);
-		$this->assertSame('x', $options->getValid());
-		$this->assertSame('', $options->setValid('')->getValid());
-		$this->assertSame('a', $options->setValid('a')->getValid());
-		$this->assertSame('a-c', $options->setValid('a-c')->getValid());
-		$this->assertSame('\p{Ll}', $options->setValid('\p{Ll}')->getValid());
-		$this->assertSame('/', $options->setValid('/')->getValid());
-		$this->assertSame('\\\\', $options->setValid('\\\\')->getValid());
-		$this->assertSame('{}*?.\\]', $options->setValid('{}*?.\\]')->getValid());
+		$options = new SlugOptions(['validChars' => 'x']);
+		$this->assertSame('x', $options->getValidChars());
+		$this->assertSame('', $options->setValidChars('')->getValidChars());
+		$this->assertSame('a', $options->setValidChars('a')->getValidChars());
+		$this->assertSame('a-c', $options->setValidChars('a-c')->getValidChars());
+		$this->assertSame('\p{Ll}', $options->setValidChars('\p{Ll}')->getValidChars());
+		$this->assertSame('/', $options->setValidChars('/')->getValidChars());
+		$this->assertSame('\\\\', $options->setValidChars('\\\\')->getValidChars());
+		$this->assertSame('{}*?.\\]', $options->setValidChars('{}*?.\\]')->getValidChars());
 	}
 
 	/**
@@ -90,30 +90,30 @@ class SlugOptionsTest extends TestCase
 	 *
 	 * @param mixed $valid
 	 */
-	public function testSetValidThrows($valid)
+	public function testSetValidCharsThrows($valid)
 	{
 		$options = new SlugOptions;
 
 		$this->expectException(\InvalidArgumentException::class);
 		$this->expectExceptionMessageRegExp('("'.preg_quote($valid).'")');
 
-		$options->setValid($valid);
+		$options->setValidChars($valid);
 	}
 
-	public function testSetIgnore()
+	public function testSetIgnoreChars()
 	{
 		$options = new SlugOptions;
-		$this->assertSame('\p{Mn}\p{Lm}', $options->getIgnore());
+		$this->assertSame('\p{Mn}\p{Lm}', $options->getIgnoreChars());
 
-		$options = new SlugOptions(['ignore' => 'x']);
-		$this->assertSame('x', $options->getIgnore());
-		$this->assertSame('', $options->setIgnore('')->getIgnore());
-		$this->assertSame('a', $options->setIgnore('a')->getIgnore());
-		$this->assertSame('a-c', $options->setIgnore('a-c')->getIgnore());
-		$this->assertSame('\p{Ll}', $options->setIgnore('\p{Ll}')->getIgnore());
-		$this->assertSame('/', $options->setIgnore('/')->getIgnore());
-		$this->assertSame('\\\\', $options->setIgnore('\\\\')->getIgnore());
-		$this->assertSame('{}*?.\\]', $options->setIgnore('{}*?.\\]')->getIgnore());
+		$options = new SlugOptions(['ignoreChars' => 'x']);
+		$this->assertSame('x', $options->getIgnoreChars());
+		$this->assertSame('', $options->setIgnoreChars('')->getIgnoreChars());
+		$this->assertSame('a', $options->setIgnoreChars('a')->getIgnoreChars());
+		$this->assertSame('a-c', $options->setIgnoreChars('a-c')->getIgnoreChars());
+		$this->assertSame('\p{Ll}', $options->setIgnoreChars('\p{Ll}')->getIgnoreChars());
+		$this->assertSame('/', $options->setIgnoreChars('/')->getIgnoreChars());
+		$this->assertSame('\\\\', $options->setIgnoreChars('\\\\')->getIgnoreChars());
+		$this->assertSame('{}*?.\\]', $options->setIgnoreChars('{}*?.\\]')->getIgnoreChars());
 	}
 
 	/**
@@ -121,14 +121,14 @@ class SlugOptionsTest extends TestCase
 	 *
 	 * @param mixed $ignore
 	 */
-	public function testSetIgnoreThrows($ignore)
+	public function testSetIgnoreCharsThrows($ignore)
 	{
 		$options = new SlugOptions;
 
 		$this->expectException(\InvalidArgumentException::class);
 		$this->expectExceptionMessageRegExp('("'.preg_quote($ignore).'")');
 
-		$options->setIgnore($ignore);
+		$options->setIgnoreChars($ignore);
 	}
 
 	/**
