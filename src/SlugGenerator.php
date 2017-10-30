@@ -343,7 +343,7 @@ class SlugGenerator
 				.'$AE > AE;'
 				.'$OE > OE;'
 				.'$UE > UE;'
-				.'::Latin-ASCII;'
+				.'::Latin-ASCII;' // Any-ASCII is not available in older CLDR versions
 			;
 		}
 
