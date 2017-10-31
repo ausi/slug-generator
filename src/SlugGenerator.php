@@ -232,7 +232,7 @@ class SlugGenerator
 	 */
 	private function transformWithContext(\Transliterator $transliterator, string $text, int $index, int $length): string
 	{
-		$left = mb_substr(substr($text, 0, $index), -1, 1, 'UTF-8');
+		$left = mb_substr(substr($text, 0, $index), -1, null, 'UTF-8');
 		$right = mb_substr(substr($text, $index + $length), 0, 1, 'UTF-8');
 
 		$leftLength = strlen($left);

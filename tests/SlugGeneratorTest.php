@@ -209,6 +209,14 @@ class SlugGeneratorTest extends TestCase
 				'',
 				['validChars' => ''],
 			],
+			[
+				'contextöcontextöcontext',
+				'CONTEXTöCONTEXTöCONTEXT',
+				[
+					'validChars' => 'A-Zö',
+					'preTransforms' => ['ö > OOOO'],
+				],
+			],
 		];
 	}
 
