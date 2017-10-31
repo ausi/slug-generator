@@ -213,9 +213,7 @@ class SlugOptions implements \IteratorAggregate
 	 */
 	public function addTransform(string $transform, bool $top = true): self
 	{
-		if ($transform === '') {
-			throw new \InvalidArgumentException('Transform must not be empty');
-		}
+		$this->assertTransform($transform);
 
 		if ($top) {
 			array_unshift($this->transforms, $transform);
@@ -239,10 +237,7 @@ class SlugOptions implements \IteratorAggregate
 		$this->transforms = [];
 
 		foreach ($transforms as $transform) {
-			if (!is_string($transform)) {
-				throw new \InvalidArgumentException(sprintf('Transform must be of the type string, %s given', gettype($transform)));
-			}
-
+			$this->assertTransform($transform);
 			$this->addTransform($transform, false);
 		}
 
@@ -273,7 +268,12 @@ class SlugOptions implements \IteratorAggregate
 			$transforms = iterator_to_array($transforms, false);
 		}
 
-		return $this->setTransforms(array_merge($transforms, $this->transforms));
+		foreach (array_reverse($transforms) as $transform) {
+			$this->assertTransform($transform);
+			$this->addTransform($transform);
+		}
+
+		return $this;
 	}
 
 	/**
@@ -286,11 +286,12 @@ class SlugOptions implements \IteratorAggregate
 	 */
 	public function setPostTransforms(iterable $transforms): self
 	{
-		if (!is_array($transforms)) {
-			$transforms = iterator_to_array($transforms, false);
+		foreach ($transforms as $transform) {
+			$this->assertTransform($transform);
+			$this->addTransform($transform, false);
 		}
 
-		return $this->setTransforms(array_merge($this->transforms, $transforms));
+		return $this;
 	}
 
 	/**
@@ -326,6 +327,22 @@ class SlugOptions implements \IteratorAggregate
 
 		if ($chars !== '' && ($chars[0] === '^' || @preg_match('(^['.$chars.']?$)u', '') !== 1)) {
 			throw new \InvalidArgumentException(sprintf('Invalid regular expression character class "%s"', $chars));
+		}
+	}
+
+	/**
+	 * @param mixed $transform
+	 *
+	 * @throws \InvalidArgumentException If it’s an invalid transform
+	 */
+	private function assertTransform($transform): void
+	{
+		if (!is_string($transform)) {
+			throw new \InvalidArgumentException(sprintf('Transform must be of the type string, %s given', gettype($transform)));
+		}
+
+		if ($transform === '') {
+			throw new \InvalidArgumentException('Transform must not be empty');
 		}
 	}
 }

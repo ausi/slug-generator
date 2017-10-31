@@ -194,7 +194,7 @@ class SlugOptionsTest extends TestCase
 		$options = new SlugOptions(['transforms' => ['Upper']]);
 		$this->assertSame(['Upper'], $options->getTransforms());
 		$this->assertSame(['Lower'], $options->setTransforms(['Lower'])->getTransforms());
-		$this->assertSame(['a > b'], $options->setTransforms(['a > b'])->getTransforms());
+		$this->assertSame(['a > b', 'c > d'], $options->setTransforms(['a > b', 'c > d'])->getTransforms());
 		$this->assertSame(['a > b; ::Lower();'], $options->setTransforms(['a > b; ::Lower();'])->getTransforms());
 		$this->assertSame(['Lower'], $options->setTransforms(new \ArrayIterator(['Lower']))->getTransforms());
 		$this->assertSame([], $options->setTransforms([])->getTransforms());
@@ -224,7 +224,13 @@ class SlugOptionsTest extends TestCase
 		$options = new SlugOptions(['transforms' => [], 'preTransforms' => ['Upper']]);
 		$this->assertSame(['Upper'], $options->getTransforms());
 		$this->assertSame(['Lower', 'Upper'], $options->setPreTransforms(['Lower'])->getTransforms());
-		$this->assertSame(['a > b', 'b > c', 'Lower', 'Upper'], $options->setPreTransforms(new \ArrayIterator(['a > b', 'b > c']))->getTransforms());
+
+		// Test iterators with duplicate keys
+		$iterator = new \AppendIterator;
+		$iterator->append(new \ArrayIterator(['key1' => 'a > b']));
+		$iterator->append(new \ArrayIterator(['key1' => 'b > c']));
+
+		$this->assertSame(['a > b', 'b > c', 'Lower', 'Upper'], $options->setPreTransforms($iterator)->getTransforms());
 	}
 
 	/**
@@ -246,7 +252,13 @@ class SlugOptionsTest extends TestCase
 		$options = new SlugOptions(['transforms' => [], 'postTransforms' => ['Upper']]);
 		$this->assertSame(['Upper'], $options->getTransforms());
 		$this->assertSame(['Upper', 'Lower'], $options->setPostTransforms(['Lower'])->getTransforms());
-		$this->assertSame(['Upper', 'Lower', 'a > b', 'b > c'], $options->setPostTransforms(new \ArrayIterator(['a > b', 'b > c']))->getTransforms());
+
+		// Test iterators with duplicate keys
+		$iterator = new \AppendIterator;
+		$iterator->append(new \ArrayIterator(['key1' => 'a > b']));
+		$iterator->append(new \ArrayIterator(['key1' => 'b > c']));
+
+		$this->assertSame(['Upper', 'Lower', 'a > b', 'b > c'], $options->setPostTransforms($iterator)->getTransforms());
 	}
 
 	/**
