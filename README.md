@@ -94,7 +94,7 @@ It uses the same syntax as the `validChars` option.
 
 ```php
 $generator->generate("don't remove");                         // Result: don-t-remove
-$generator->generate("don't remove", ["ignoreChars" => "'"]); // Result: dont-remove
+$generator->generate("don't remove", ['ignoreChars' => "'"]); // Result: dont-remove
 ```
 
 ### `locale`, default `""`
