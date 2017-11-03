@@ -3,7 +3,7 @@
     "type": "library",
     "description": "Slug Generator",
     "license": "MIT",
-    "keywords": ["slug", "slugify", "slug-generator"],
+    "keywords": ["slug", "slugify", "slug-generator", "transliteration", "unicode", "ascii", "cldr", "pretty-url"],
     "authors": [
         {
             "name": "Martin Auswöger",
