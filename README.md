@@ -55,7 +55,7 @@ Some libs carry large rulesets with them that try to convert characters to ASCII
 no one uses Unicode’s [CLDR][]
 which is the standard for transliteration rules and many other transforms.
 But most importantly no library was able to do the “correct” conversions,
-like “Ö-Äpfel” to “OE-Aepfel” for German or “İNATÇI” to “inatçı” for turkish.
+like “Ö-Äpfel” to “OE-Aepfel” for German or “İNATÇI” to “inatçı” for Turkish.
 
 Options
 -------
