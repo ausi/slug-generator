@@ -116,7 +116,7 @@ to convert invalid characters to valid ones.
 
 ```php
 $generator->generate('Damn 💩!!');                                           // Result: damn
-$generator->generate('Damn 💩!!', ['transforms' => ['💩 > Ice-Cream']]);     // Result: amn-ce-ream
+$generator->generate('Damn 💩!!', ['transforms' => ['💩 > Ice-Cream']]);     // Result: damn-ce-ream
 $generator->generate('Damn 💩!!', ['postTransforms' => ['💩 > Ice-Cream']]); // Result: damn-ce-ream
 $generator->generate('Damn 💩!!', ['preTransforms' => ['💩 > Ice-Cream']]);  // Result: damn-ice-cream
 ```
