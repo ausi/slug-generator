@@ -48,6 +48,7 @@ class SlugOptions implements \IteratorAggregate
 		'Lower',
 		'Latn',
 		'ASCII',
+		// Upper and Lower need to be applied again after the other transforms
 		'Upper',
 		'Lower',
 	];
