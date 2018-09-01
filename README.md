@@ -6,7 +6,7 @@ Slug Generator Library
 [![Coverage](https://img.shields.io/coveralls/ausi/slug-generator/master.svg?style=flat-square)](https://coveralls.io/github/ausi/slug-generator)
 [![Packagist Version](https://img.shields.io/packagist/v/ausi/slug-generator.svg?style=flat-square)](https://packagist.org/packages/ausi/slug-generator)
 [![Downloads](https://img.shields.io/packagist/dt/ausi/slug-generator.svg?style=flat-square)](https://packagist.org/packages/ausi/slug-generator)
-[![Patreon](https://img.shields.io/badge/Patreon-%24141%2Fmonth-lightgrey.svg?style=flat-square&colorA=F96854&colorB=555555)](https://www.patreon.com/ausi)
+[![Patreon](https://img.shields.io/badge/Donate%20on-Patreon-lightgrey.svg?style=flat-square&colorB=F96854)](https://www.patreon.com/ausi)
 [![MIT License](https://img.shields.io/github/license/ausi/slug-generator.svg?style=flat-square)](https://github.com/ausi/slug-generator/blob/master/LICENSE)
 
 This library provides methods to generate slugs
