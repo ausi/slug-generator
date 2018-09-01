@@ -15,7 +15,7 @@
         "ext-intl": "*",
         "ext-mbstring": "*",
         "ext-pcre": "*",
-        "lib-icu": ">=4.6"
+        "lib-icu": ">=4.2.1"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.4",

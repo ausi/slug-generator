@@ -33,9 +33,14 @@ class SlugGeneratorTest extends TestCase
 	 * @param string $source
 	 * @param string $expected
 	 * @param array  $options
+	 * @param bool   $skip
 	 */
-	public function testGenerate(string $source, string $expected, array $options = [])
+	public function testGenerate(string $source, string $expected, array $options = [], bool $skip = false)
 	{
+		if ($skip) {
+			$this->markTestSkipped();
+		}
+
 		$generator = new SlugGenerator($options);
 		$this->assertSame($expected, $generator->generate($source));
 
@@ -101,6 +106,7 @@ class SlugGeneratorTest extends TestCase
 					'validChars' => 'a-pr-vyzçğıöşü', // Turkish alphabet
 					'locale' => 'tr',
 				],
+				version_compare(INTL_ICU_VERSION, '51.2', '<'),
 			],
 			[
 				'inatçı',
@@ -109,6 +115,7 @@ class SlugGeneratorTest extends TestCase
 					'validChars' => 'A-PR-VYZÇĞİÖŞÜ', // Turkish alphabet
 					'locale' => 'tr',
 				],
+				version_compare(INTL_ICU_VERSION, '51.2', '<'),
 			],
 			['Καλημέρα', 'kalemera'],
 			[
@@ -248,9 +255,14 @@ class SlugGeneratorTest extends TestCase
 	 *
 	 * @param array  $parameters
 	 * @param string $expected
+	 * @param bool   $skip
 	 */
-	public function testPrivateApplyTransformRule(array $parameters, string $expected)
+	public function testPrivateApplyTransformRule(array $parameters, string $expected, bool $skip = false)
 	{
+		if ($skip) {
+			$this->markTestSkipped();
+		}
+
 		$generator = new SlugGenerator;
 		$reflection = new \ReflectionClass(get_class($generator));
 		$method = $reflection->getMethod('applyTransformRule');
@@ -280,6 +292,7 @@ class SlugGeneratorTest extends TestCase
 			[
 				['iı', 'Upper', 'tr', '/.+/'],
 				'İI',
+				version_compare(INTL_ICU_VERSION, '51.2', '<'),
 			],
 			[
 				['iı', 'Upper', '', '/.+/'],
@@ -288,6 +301,7 @@ class SlugGeneratorTest extends TestCase
 			[
 				['İI', 'Lower', 'tr_Latn_AT', '/.+/'],
 				'iı',
+				version_compare(INTL_ICU_VERSION, '51.2', '<'),
 			],
 			[
 				['İI', 'Lower', '', '/.+/'],

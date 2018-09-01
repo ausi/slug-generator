@@ -6,6 +6,7 @@ git:
 cache:
   directories:
     - $HOME/.composer/cache
+    - $HOME/php-fromsource
 
 sudo: false
 
@@ -13,18 +14,45 @@ env:
   global:
     - COMPOSER_ALLOW_XDEBUG=0
 
-matrix:
+jobs:
   include:
     - php: 7.1
       env: COVERAGE='--coverage-clover build/logs/clover.xml'
     - php: 7.2
+
+    # Ignore the platform requirements for the upcoming PHP version
+    - php: nightly
       env: COMPOSER_FLAGS='--ignore-platform-reqs'
 
-before_install:
-  - composer selfupdate
+    # Test lowest ICU version
+    - php: 7.2
+      addons:
+        apt:
+          packages:
+            - autoconf
+            - build-essential
+            - curl
+            - libtool
+            - libssl-dev
+            - libcurl4-openssl-dev
+            - libxml2-dev
+            - libreadline-dev
+            - nginx
+            - openssl
+            - pkg-config
+      install:
+        - .travis/install-icu.sh
+        - export PATH="$HOME/php-fromsource/build/bin/:$PATH"
+        - composer update $COMPOSER_FLAGS --no-interaction --no-suggest
 
-before_script:
-  - travis_wait composer update $COMPOSER_FLAGS --no-interaction
+  allow_failures:
+    - php: nightly
+
+before_install:
+  - if [[ ! $COVERAGE ]]; then phpenv config-rm xdebug.ini || true; fi
+
+install:
+  - composer update $COMPOSER_FLAGS --no-interaction --no-suggest
 
 script:
   - if [[ $COVERAGE ]]; then mkdir -p build/logs; fi

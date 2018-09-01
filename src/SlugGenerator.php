@@ -282,8 +282,6 @@ class SlugGenerator
 	 */
 	private function findMatchingTransliterator(string $rule, string $locale): \Transliterator
 	{
-		$rule = $this->fixTransliteratorRule($rule, $locale);
-
 		$candidates = [
 			'Latin-'.$rule,
 			$rule,
@@ -298,13 +296,13 @@ class SlugGenerator
 		}
 
 		foreach ($candidates as $candidate) {
+			$candidate = $this->fixTransliteratorRule($candidate);
 			if ($transliterator = \Transliterator::create($candidate)) {
 				return $transliterator;
 			}
-		}
-
-		if ($transliterator = \Transliterator::createFromRules($rule)) {
-			return $transliterator;
+			if ($transliterator = \Transliterator::createFromRules($candidate)) {
+				return $transliterator;
+			}
 		}
 
 		throw new \InvalidArgumentException(
@@ -316,35 +314,39 @@ class SlugGenerator
 	 * Apply fixes to a transform rule for older versions of the Intl extension.
 	 *
 	 * @param string $rule
-	 * @param string $locale
 	 *
 	 * @return string
 	 */
-	private function fixTransliteratorRule(string $rule, string $locale): string
+	private function fixTransliteratorRule(string $rule): string
 	{
-		static $deAsciiFixNeeded;
+		static $latinAsciiFix;
+		static $deAsciiFix;
 
-		if ($deAsciiFixNeeded === null) {
-			$deAsciiFixNeeded = !in_array('de-ASCII', \Transliterator::listIDs(), true);
+		if ($latinAsciiFix === null) {
+			$latinAsciiFix = \in_array('Latin-ASCII', \Transliterator::listIDs(), true)
+				? false
+				: file_get_contents(__DIR__.'/Resources/Latin-ASCII.txt')
+			;
+		}
+
+		if ($deAsciiFix === null) {
+			$deAsciiFix = \in_array('de-ASCII', \Transliterator::listIDs(), true)
+				? false
+				: file_get_contents(__DIR__.'/Resources/de-ASCII.txt')
+			;
+			if ($latinAsciiFix) {
+				$deAsciiFix = str_replace('::Latin-ASCII;', $latinAsciiFix, $deAsciiFix);
+			}
 		}
 
 		// Add the de-ASCII transform if a CLDR version lower than 32.0 is used.
-		if ($deAsciiFixNeeded && $rule === 'ASCII' && $locale && \Locale::getPrimaryLanguage($locale) === 'de') {
-			return
-				'$AE = [Ä {A \u0308}];'
-				.'$OE = [Ö {O \u0308}];'
-				.'$UE = [Ü {U \u0308}];'
-				.'[ä {a \u0308}] > ae;'
-				.'[ö {o \u0308}] > oe;'
-				.'[ü {u \u0308}] > ue;'
-				.'$AE } [:Lowercase:] > Ae;'
-				.'$OE } [:Lowercase:] > Oe;'
-				.'$UE } [:Lowercase:] > Ue;'
-				.'$AE > AE;'
-				.'$OE > OE;'
-				.'$UE > UE;'
-				.'::Latin-ASCII;' // Any-ASCII is not available in older CLDR versions
-			;
+		if ($deAsciiFix && $rule === 'de-ASCII') {
+			return $deAsciiFix;
+		}
+
+		// Add the Latin-ASCII transform if a CLDR version lower than 1.9 is used.
+		if ($latinAsciiFix && $rule === 'Latin-ASCII') {
+			return $latinAsciiFix;
 		}
 
 		return $rule;
