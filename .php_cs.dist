@@ -22,6 +22,7 @@ return PhpCsFixer\Config::create()
 		],
 		'@Symfony' => true,
 		'new_with_braces' => false,
+		'yoda_style' => false,
 		'array_syntax' => ['syntax' => 'short'],
 		'list_syntax' => ['syntax' => 'short'],
 		'strict_comparison' => true,

@@ -308,8 +308,7 @@ class SlugGenerator
 					return $transliterator;
 				}
 			}
-		}
-		finally {
+		} finally {
 			ini_set('intl.error_level', $errorLevel);
 			ini_set('intl.use_exceptions', $useExceptions);
 		}
