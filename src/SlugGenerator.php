@@ -295,14 +295,23 @@ class SlugGenerator
 			);
 		}
 
-		foreach ($candidates as $candidate) {
-			$candidate = $this->fixTransliteratorRule($candidate);
-			if ($transliterator = \Transliterator::create($candidate)) {
-				return $transliterator;
+		$errorLevel = ini_set('intl.error_level', '0');
+		$useExceptions = ini_set('intl.use_exceptions', '0');
+
+		try {
+			foreach ($candidates as $candidate) {
+				$candidate = $this->fixTransliteratorRule($candidate);
+				if ($transliterator = \Transliterator::create($candidate)) {
+					return $transliterator;
+				}
+				if ($transliterator = \Transliterator::createFromRules($candidate)) {
+					return $transliterator;
+				}
 			}
-			if ($transliterator = \Transliterator::createFromRules($candidate)) {
-				return $transliterator;
-			}
+		}
+		finally {
+			ini_set('intl.error_level', $errorLevel);
+			ini_set('intl.use_exceptions', $useExceptions);
 		}
 
 		throw new \InvalidArgumentException(

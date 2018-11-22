@@ -49,6 +49,38 @@ class SlugGeneratorTest extends TestCase
 	}
 
 	/**
+	 * @dataProvider getGenerate
+	 *
+	 * @param string $source
+	 * @param string $expected
+	 * @param array  $options
+	 * @param bool   $skip
+	 */
+	public function testGenerateWithIntlErrors(string $source, string $expected, array $options = [], bool $skip = false)
+	{
+		$errorLevel = ini_get('intl.error_level');
+		$useExceptions = ini_get('intl.use_exceptions');
+
+		try {
+			ini_set('intl.error_level', (string) E_WARNING);
+			$this->testGenerate($source, $expected, $options, $skip);
+			$this->assertSame((string) E_WARNING, ini_get('intl.error_level'));
+
+			ini_set('intl.error_level', (string) E_ERROR);
+			$this->testGenerate($source, $expected, $options, $skip);
+			$this->assertSame((string) E_ERROR, ini_get('intl.error_level'));
+
+			ini_set('intl.use_exceptions', '1');
+			$this->testGenerate($source, $expected, $options, $skip);
+			$this->assertSame('1', ini_get('intl.use_exceptions'));
+		}
+		finally {
+			ini_set('intl.error_level', $errorLevel);
+			ini_set('intl.use_exceptions', $useExceptions);
+		}
+	}
+
+	/**
 	 * @return array
 	 */
 	public function getGenerate(): array
