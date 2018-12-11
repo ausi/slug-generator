@@ -60,4 +60,4 @@ script:
   - php vendor/bin/phpunit $COVERAGE
 
 after_script:
-  - if [[ $COVERAGE ]]; then php vendor/bin/coveralls; fi
+  - if [[ $COVERAGE ]]; then php vendor/bin/php-coveralls; fi
