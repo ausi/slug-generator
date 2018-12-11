@@ -18,7 +18,7 @@ namespace Ausi\SlugGenerator;
  *
  * @author Martin Auswöger <martin@auswoeger.com>
  */
-class SlugGenerator
+class SlugGenerator implements SlugGeneratorInterface
 {
 	/**
 	 * @var SlugOptions
@@ -63,12 +63,7 @@ class SlugGenerator
 	}
 
 	/**
-	 * Generate a slug from the specified text.
-	 *
-	 * @param string   $text
-	 * @param iterable $options SlugOptions object or options array
-	 *
-	 * @return string
+	 * {@inheritdoc}
 	 */
 	public function generate(string $text, iterable $options = []): string
 	{

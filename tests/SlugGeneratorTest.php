@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Ausi\SlugGenerator\Tests;
 
 use Ausi\SlugGenerator\SlugGenerator;
+use Ausi\SlugGenerator\SlugGeneratorInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -25,6 +26,7 @@ class SlugGeneratorTest extends TestCase
 	{
 		$this->assertInstanceOf(SlugGenerator::class, new SlugGenerator);
 		$this->assertInstanceOf(SlugGenerator::class, new SlugGenerator([]));
+		$this->assertInstanceOf(SlugGeneratorInterface::class, new SlugGenerator);
 	}
 
 	/**
