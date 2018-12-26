@@ -19,6 +19,9 @@ Usage
 -----
 
 ```php
+<?php
+use Ausi\SlugGenerator\SlugGenerator;
+
 $generator = new SlugGenerator;
 
 $generator->generate('Hello Wörld!');  // Output: hello-world
