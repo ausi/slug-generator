@@ -112,20 +112,31 @@ $generator->generate('Hello Wörld!', ['locale' => 'en_US']); // Result: hello-w
 
 ### `transforms`, default `Upper, Lower, Latn, ASCII, Upper, Lower`
 
-Transform rules or rule sets that are used by the `Transliterator`
+Internally the slug generator uses [Transform Rules][]
 to convert invalid characters to valid ones.
-[Rules][] are for example `Lower` or `ASCII`,
-[rule sets][] look like `a > b; c > d;`.
+These rules can be customized
+by setting the `transforms`, `preTransforms` or `postTransforms` options.
+Usually setting `preTransforms` is desired
+as it applies the custom transforms
+prior to the default ones.
+
+How [Transform Rules][] (like `Lower` or `ASCII`)
+and [rule sets][] (like `a > b; c > d;`) work
+is documented on the ICU website:
+<http://userguide.icu-project.org/transforms>
 
 ```php
 $generator->generate('Damn 💩!!');                                           // Result: damn
-$generator->generate('Damn 💩!!', ['transforms' => ['💩 > Ice-Cream']]);     // Result: amn-ce-ream
-$generator->generate('Damn 💩!!', ['postTransforms' => ['💩 > Ice-Cream']]); // Result: damn-ce-ream
 $generator->generate('Damn 💩!!', ['preTransforms' => ['💩 > Ice-Cream']]);  // Result: damn-ice-cream
+
+$generator->generate('©');                                          // Result: c
+$generator->generate('©', ['preTransforms' => ['© > Copyright']]);  // Result: copyright
+$generator->generate('©', ['preTransforms' => ['Hex']]);            // Result: u00a9
+$generator->generate('©', ['preTransforms' => ['Name']]);           // Result: n-copyright-sign
 ```
 
 [CLDR]: http://cldr.unicode.org/ "Unicode Common Locale Data Repository"
 [Composer]: https://getcomposer.org/
 [range syntax]: http://www.regular-expressions.info/charclass.html
-[Rules]: http://userguide.icu-project.org/transforms/general
+[Transform Rules]: http://userguide.icu-project.org/transforms/general
 [rule sets]: http://userguide.icu-project.org/transforms/general/rules
