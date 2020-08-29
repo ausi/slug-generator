@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the ausi/slug-generator package.
  *
@@ -8,8 +10,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-declare(strict_types=1);
 
 namespace Ausi\SlugGenerator;
 
@@ -41,7 +41,7 @@ class SlugOptions implements \IteratorAggregate
 	private $locale = '';
 
 	/**
-	 * @var string[]
+	 * @var array<string>
 	 */
 	private $transforms = [
 		'Upper',
@@ -78,7 +78,7 @@ class SlugOptions implements \IteratorAggregate
 	{
 		$options = [];
 
-		foreach ($this->setOptions as $option => $value) {
+		foreach (array_keys($this->setOptions) as $option) {
 			$options[$option] = $this->{'get'.ucfirst($option)}();
 		}
 
@@ -117,9 +117,6 @@ class SlugOptions implements \IteratorAggregate
 		return $this;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getDelimiter(): string
 	{
 		return $this->delimiter;
@@ -142,9 +139,6 @@ class SlugOptions implements \IteratorAggregate
 		return $this;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getValidChars(): string
 	{
 		return $this->validChars;
@@ -167,9 +161,6 @@ class SlugOptions implements \IteratorAggregate
 		return $this;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getIgnoreChars(): string
 	{
 		return $this->ignoreChars;
@@ -197,9 +188,6 @@ class SlugOptions implements \IteratorAggregate
 		return $this;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getLocale(): string
 	{
 		return $this->locale;
@@ -248,7 +236,7 @@ class SlugOptions implements \IteratorAggregate
 	}
 
 	/**
-	 * @return string[]
+	 * @return array<string>
 	 */
 	public function getTransforms(): array
 	{
@@ -265,7 +253,7 @@ class SlugOptions implements \IteratorAggregate
 	 */
 	public function setPreTransforms(iterable $transforms): self
 	{
-		if (!is_array($transforms)) {
+		if (!\is_array($transforms)) {
 			$transforms = iterator_to_array($transforms, false);
 		}
 
@@ -296,8 +284,6 @@ class SlugOptions implements \IteratorAggregate
 	}
 
 	/**
-	 * @param string $option
-	 *
 	 * @throws \InvalidArgumentException If it’s an invalid option name
 	 */
 	private function assertOptionName(string $option): void
@@ -312,14 +298,12 @@ class SlugOptions implements \IteratorAggregate
 			'postTransforms',
 		];
 
-		if (!in_array($option, $validOptions, true)) {
+		if (!\in_array($option, $validOptions, true)) {
 			throw new \InvalidArgumentException(sprintf('Unknown option "%s"', $option));
 		}
 	}
 
 	/**
-	 * @param string $chars
-	 *
 	 * @throws \InvalidArgumentException If it’s an invalid regex character class
 	 */
 	private function assertCharacterClass(string $chars): void
@@ -332,14 +316,12 @@ class SlugOptions implements \IteratorAggregate
 	}
 
 	/**
-	 * @param mixed $transform
-	 *
 	 * @throws \InvalidArgumentException If it’s an invalid transform
 	 */
 	private function assertTransform($transform): void
 	{
-		if (!is_string($transform)) {
-			throw new \InvalidArgumentException(sprintf('Transform must be of the type string, %s given', gettype($transform)));
+		if (!\is_string($transform)) {
+			throw new \InvalidArgumentException(sprintf('Transform must be of the type string, %s given', \gettype($transform)));
 		}
 
 		if ($transform === '') {

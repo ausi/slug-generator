@@ -1,0 +1,15 @@
+imports:
+    - { resource: vendor/contao/easy-coding-standard/config/default.yaml }
+
+parameters:
+    indentation: 'tab'
+    skip:
+        PhpCsFixer\Fixer\Operator\NewWithBracesFixer: ~
+
+services:
+    PhpCsFixer\Fixer\Comment\HeaderCommentFixer:
+        header: "This file is part of the ausi/slug-generator package.\n\n(c) Martin Auswöger <martin@auswoeger.com>\n\nFor the full copyright and license information, please view the LICENSE\nfile that was distributed with this source code."
+    PhpCsFixer\Fixer\ControlStructure\YodaStyleFixer:
+        equal: false
+        identical: false
+        less_and_greater: false
