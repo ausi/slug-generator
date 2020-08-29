@@ -95,7 +95,13 @@ class SlugGenerator implements SlugGeneratorInterface
 			return $text;
 		}
 
-		return preg_replace('(['.$ignore.'])us', '', $text);
+		$replaced = preg_replace('(['.$ignore.'])us', '', $text);
+
+		if ($replaced === null) {
+			throw new \RuntimeException(sprintf('Failed to replace "%s" in "%s".', '['.$ignore.']', $text));
+		}
+
+		return $replaced;
 	}
 
 	/**
@@ -107,14 +113,24 @@ class SlugGenerator implements SlugGeneratorInterface
 		$quoted = preg_quote($delimiter);
 
 		// Replace all invalid characters with a single delimiter
-		$text = preg_replace(
+		$replaced = preg_replace(
 			'((?:[^'.$valid.']|'.$quoted.')+)us',
 			$delimiter,
 			$text
 		);
 
+		if ($replaced === null) {
+			throw new \RuntimeException(sprintf('Failed to replace "%s" with "%s" in "%s".', '(?:[^'.$valid.']|'.$quoted.')+', $delimiter, $text));
+		}
+
 		// Remove delimiters from the beginning and the end
-		return preg_replace('(^(?:'.$quoted.')+|(?:'.$quoted.')+$)us', '', $text);
+		$removed = preg_replace('(^(?:'.$quoted.')+|(?:'.$quoted.')+$)us', '', $replaced);
+
+		if ($removed === null) {
+			throw new \RuntimeException(sprintf('Failed to replace "%s" in "%s".', '^(?:'.$quoted.')+|(?:'.$quoted.')+$', $replaced));
+		}
+
+		return $removed;
 	}
 
 	/**
@@ -206,6 +222,10 @@ class SlugGenerator implements SlugGeneratorInterface
 
 		$transformed = $transliterator->transliterate($left.$text.$right);
 
+		if ($transformed === false) {
+			throw new \RuntimeException(sprintf('Failed to transliterate "%s" with %s.', $left.$text.$right, $transliterator->id));
+		}
+
 		if (
 			(!$leftLength || strncmp($transformed, $left, $leftLength) === 0)
 			&& (!$rightLength || substr_compare($transformed, $right, -$rightLength) === 0)
@@ -213,7 +233,13 @@ class SlugGenerator implements SlugGeneratorInterface
 			return substr($transformed, $leftLength, $rightLength ? -$rightLength : \strlen($transformed));
 		}
 
-		return $transliterator->transliterate($text);
+		$transformed = $transliterator->transliterate($text);
+
+		if ($transformed === false) {
+			throw new \RuntimeException(sprintf('Failed to transliterate "%s" with %s.', $text, $transliterator->id));
+		}
+
+		return $transformed;
 	}
 
 	/**
@@ -265,8 +291,8 @@ class SlugGenerator implements SlugGeneratorInterface
 				}
 			}
 		} finally {
-			ini_set('intl.error_level', $errorLevel);
-			ini_set('intl.use_exceptions', $useExceptions);
+			ini_set('intl.error_level', (string) $errorLevel);
+			ini_set('intl.use_exceptions', (string) $useExceptions);
 		}
 
 		throw new \InvalidArgumentException(sprintf('No Transliterator transform rule found for "%s" with locale "%s".', $rule, $locale));
@@ -293,7 +319,7 @@ class SlugGenerator implements SlugGeneratorInterface
 				: file_get_contents(__DIR__.'/Resources/de-ASCII.txt')
 			;
 
-			if ($latinAsciiFix) {
+			if ($latinAsciiFix && $deAsciiFix) {
 				$deAsciiFix = str_replace('::Latin-ASCII;', $latinAsciiFix, $deAsciiFix);
 			}
 		}

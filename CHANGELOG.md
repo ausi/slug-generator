@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+ * Fix type issues found by PHPStan.
 
 ## [1.1.0] (2018-12-11)
 

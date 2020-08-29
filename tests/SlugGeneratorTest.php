@@ -68,8 +68,8 @@ class SlugGeneratorTest extends TestCase
 			$this->testGenerate($source, $expected, $options, $skip);
 			$this->assertSame('1', ini_get('intl.use_exceptions'));
 		} finally {
-			ini_set('intl.error_level', $errorLevel);
-			ini_set('intl.use_exceptions', $useExceptions);
+			ini_set('intl.error_level', (string) $errorLevel);
+			ini_set('intl.use_exceptions', (string) $useExceptions);
 		}
 	}
 
