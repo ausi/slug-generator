@@ -265,7 +265,7 @@ class SlugGeneratorTest extends TestCase
 		$generator = new SlugGenerator;
 
 		$this->expectException(\InvalidArgumentException::class);
-		$this->expectExceptionMessageRegExp('(utf-?8)i');
+		$this->expectExceptionMatches('(utf-?8)i');
 
 		$generator->generate("\x80");
 	}
@@ -275,7 +275,7 @@ class SlugGeneratorTest extends TestCase
 		$generator = new SlugGenerator;
 
 		$this->expectException(\InvalidArgumentException::class);
-		$this->expectExceptionMessageRegExp('("invalid rule".*"de_AT")');
+		$this->expectExceptionMatches('("invalid rule".*"de_AT")');
 
 		$generator->generate('foö', [
 			'transforms' => ['invalid rule'],
@@ -349,5 +349,16 @@ class SlugGeneratorTest extends TestCase
 				'oess',
 			],
 		];
+	}
+
+	private function expectExceptionMatches(string $regularExpression): void
+	{
+		if (method_exists($this, 'expectExceptionMessageMatches')) {
+			$this->expectExceptionMessageMatches($regularExpression);
+		}
+		else {
+			// PHPUnit 7 compat
+			$this->expectExceptionMessageRegExp($regularExpression);
+		}
 	}
 }

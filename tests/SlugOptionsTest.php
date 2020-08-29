@@ -95,7 +95,7 @@ class SlugOptionsTest extends TestCase
 		$options = new SlugOptions;
 
 		$this->expectException(\InvalidArgumentException::class);
-		$this->expectExceptionMessageRegExp('("'.preg_quote($valid).'")');
+		$this->expectExceptionMatches('("'.preg_quote($valid).'")');
 
 		$options->setValidChars($valid);
 	}
@@ -126,7 +126,7 @@ class SlugOptionsTest extends TestCase
 		$options = new SlugOptions;
 
 		$this->expectException(\InvalidArgumentException::class);
-		$this->expectExceptionMessageRegExp('("'.preg_quote($ignore).'")');
+		$this->expectExceptionMatches('("'.preg_quote($ignore).'")');
 
 		$options->setIgnoreChars($ignore);
 	}
@@ -169,7 +169,7 @@ class SlugOptionsTest extends TestCase
 		$options = new SlugOptions;
 
 		$this->expectException(\InvalidArgumentException::class);
-		$this->expectExceptionMessageRegExp('("'.preg_quote($locale).'")');
+		$this->expectExceptionMatches('("'.preg_quote($locale).'")');
 
 		$options->setLocale($locale);
 	}
@@ -308,8 +308,19 @@ class SlugOptionsTest extends TestCase
 	public function testUnknownOptionThrows()
 	{
 		$this->expectException(\InvalidArgumentException::class);
-		$this->expectExceptionMessageRegExp('(unknown.*"foo")i');
+		$this->expectExceptionMatches('(unknown.*"foo")i');
 
 		new SlugOptions(['foo' => 'bar']);
+	}
+
+	private function expectExceptionMatches(string $regularExpression): void
+	{
+		if (method_exists($this, 'expectExceptionMessageMatches')) {
+			$this->expectExceptionMessageMatches($regularExpression);
+		}
+		else {
+			// PHPUnit 7 compat
+			$this->expectExceptionMessageRegExp($regularExpression);
+		}
 	}
 }

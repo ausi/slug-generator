@@ -19,7 +19,7 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.4",
-        "phpunit/phpunit": "^7.0",
+        "phpunit/phpunit": "^7.5.20 | ^8.5.4",
         "php-coveralls/php-coveralls": "^2.0"
     },
     "autoload": {
