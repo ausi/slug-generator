@@ -24,8 +24,7 @@
         "phpunit/phpunit": "^7.5.20 | ^8.5.4",
         "psalm/plugin-phpunit": "^0.9",
         "slam/phpstan-extensions": "^5.0",
-        "vimeo/psalm": "^3.9",
-        "php-coveralls/php-coveralls": "^2.0"
+        "vimeo/psalm": "^3.9"
     },
     "autoload": {
         "psr-4": {
@@ -36,5 +35,25 @@
         "psr-4": {
             "Ausi\\SlugGenerator\\Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "all": [
+            "@unit-tests",
+            "@cs-fixer",
+            "@phpstan",
+            "@psalm"
+        ],
+        "cs-fixer": [
+            "vendor/bin/ecs check src tests --fix --ansi"
+        ],
+        "phpstan": [
+            "vendor/bin/phpstan analyze src tests --level=8 --memory-limit=1G --ansi"
+        ],
+        "psalm": [
+            "vendor/bin/psalm --no-suggestions --threads=4"
+        ],
+        "unit-tests": [
+            "vendor/bin/phpunit --colors=always"
+        ]
     }
 }
