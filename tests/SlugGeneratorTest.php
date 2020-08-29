@@ -30,6 +30,7 @@ class SlugGeneratorTest extends TestCase
 	}
 
 	/**
+	 * @param array<string,mixed> $options
 	 * @dataProvider getGenerate
 	 */
 	public function testGenerate(string $source, string $expected, array $options = [], bool $skip = false): void
@@ -46,6 +47,7 @@ class SlugGeneratorTest extends TestCase
 	}
 
 	/**
+	 * @param array<string,mixed> $options
 	 * @dataProvider getGenerate
 	 */
 	public function testGenerateWithIntlErrors(string $source, string $expected, array $options = [], bool $skip = false): void
@@ -71,6 +73,9 @@ class SlugGeneratorTest extends TestCase
 		}
 	}
 
+	/**
+	 * @return array<array>
+	 */
 	public function getGenerate(): array
 	{
 		return [
@@ -271,6 +276,7 @@ class SlugGeneratorTest extends TestCase
 	}
 
 	/**
+	 * @param array<string> $parameters
 	 * @dataProvider getPrivateApplyTransformRule
 	 */
 	public function testPrivateApplyTransformRule(array $parameters, string $expected, bool $skip = false): void
@@ -287,6 +293,9 @@ class SlugGeneratorTest extends TestCase
 		$this->assertSame($expected, $method->invokeArgs($generator, $parameters));
 	}
 
+	/**
+	 * @return array<array>
+	 */
 	public function getPrivateApplyTransformRule(): array
 	{
 		return [
@@ -331,6 +340,9 @@ class SlugGeneratorTest extends TestCase
 		];
 	}
 
+	/**
+	 * @psalm-suppress DeprecatedMethod
+	 */
 	private function expectExceptionMatches(string $regularExpression): void
 	{
 		if (method_exists($this, 'expectExceptionMessageMatches')) {

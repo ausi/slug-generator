@@ -88,7 +88,7 @@ class SlugOptionsTest extends TestCase
 	/**
 	 * @dataProvider getInvalidCharacterClasses
 	 */
-	public function testSetValidCharsThrows($valid): void
+	public function testSetValidCharsThrows(string $valid): void
 	{
 		$options = new SlugOptions;
 
@@ -117,7 +117,7 @@ class SlugOptionsTest extends TestCase
 	/**
 	 * @dataProvider getInvalidCharacterClasses
 	 */
-	public function testSetIgnoreCharsThrows($ignore): void
+	public function testSetIgnoreCharsThrows(string $ignore): void
 	{
 		$options = new SlugOptions;
 
@@ -128,9 +128,9 @@ class SlugOptionsTest extends TestCase
 	}
 
 	/**
-	 * @return array
+	 * @return array<array<string>>
 	 */
-	public function getInvalidCharacterClasses()
+	public function getInvalidCharacterClasses(): array
 	{
 		return [
 			['^a'],
@@ -158,7 +158,7 @@ class SlugOptionsTest extends TestCase
 	/**
 	 * @dataProvider getSetLocaleThrows
 	 */
-	public function testSetLocaleThrows($locale): void
+	public function testSetLocaleThrows(string $locale): void
 	{
 		$options = new SlugOptions;
 
@@ -169,7 +169,7 @@ class SlugOptionsTest extends TestCase
 	}
 
 	/**
-	 * @return array
+	 * @return array<array<string>>
 	 */
 	public function getSetLocaleThrows()
 	{
@@ -201,6 +201,8 @@ class SlugOptionsTest extends TestCase
 
 	/**
 	 * @dataProvider getAddTransformThrows
+	 *
+	 * @phpstan-param mixed $transform
 	 */
 	public function testSetTransformsThrows($transform): void
 	{
@@ -227,6 +229,8 @@ class SlugOptionsTest extends TestCase
 
 	/**
 	 * @dataProvider getAddTransformThrows
+	 *
+	 * @phpstan-param mixed $transform
 	 */
 	public function testSetPreTransformsThrows($transform): void
 	{
@@ -253,6 +257,8 @@ class SlugOptionsTest extends TestCase
 
 	/**
 	 * @dataProvider getAddTransformThrows
+	 *
+	 * @phpstan-param mixed $transform
 	 */
 	public function testSetPostTransformsThrows($transform): void
 	{
@@ -266,9 +272,11 @@ class SlugOptionsTest extends TestCase
 	/**
 	 * @dataProvider getAddTransformThrows
 	 *
-	 * @param string|null $expectedException
+	 * @phpstan-param mixed $transform
+	 *
+	 * @param class-string<\Throwable> $expectedException
 	 */
-	public function testAddTransformThrows($transform, $expectedException): void
+	public function testAddTransformThrows($transform, string $expectedException): void
 	{
 		$options = new SlugOptions(['transforms' => []]);
 
@@ -280,7 +288,7 @@ class SlugOptionsTest extends TestCase
 	}
 
 	/**
-	 * @return array
+	 * @return array<array>
 	 */
 	public function getAddTransformThrows()
 	{
@@ -300,6 +308,9 @@ class SlugOptionsTest extends TestCase
 		new SlugOptions(['foo' => 'bar']);
 	}
 
+	/**
+	 * @psalm-suppress DeprecatedMethod
+	 */
 	private function expectExceptionMatches(string $regularExpression): void
 	{
 		if (method_exists($this, 'expectExceptionMessageMatches')) {

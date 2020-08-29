@@ -17,6 +17,8 @@ namespace Ausi\SlugGenerator;
  * Slug generator options.
  *
  * @author Martin Auswöger <martin@auswoeger.com>
+ *
+ * @implements \IteratorAggregate<string,mixed>
  */
 class SlugOptions implements \IteratorAggregate
 {
@@ -54,12 +56,12 @@ class SlugOptions implements \IteratorAggregate
 	];
 
 	/**
-	 * @var array
+	 * @var array<string,null>
 	 */
 	private $setOptions = [];
 
 	/**
-	 * @param iterable $options See the setter methods for available options
+	 * @param iterable<string,mixed> $options See the setter methods for available options
 	 */
 	public function __construct(iterable $options = [])
 	{
@@ -73,6 +75,8 @@ class SlugOptions implements \IteratorAggregate
 	 * Get an iterator for all options that have been explicitly set.
 	 *
 	 * {@inheritdoc}
+	 *
+	 * @return \Traversable<string,mixed>
 	 */
 	public function getIterator(): \Traversable
 	{
@@ -88,7 +92,7 @@ class SlugOptions implements \IteratorAggregate
 	/**
 	 * Merge the options with and return a new options object.
 	 *
-	 * @param iterable $options SlugOptions object or options array
+	 * @param iterable<string,mixed> $options SlugOptions object or options array
 	 *
 	 * @return static
 	 */
@@ -216,8 +220,8 @@ class SlugOptions implements \IteratorAggregate
 	}
 
 	/**
-	 * @param iterable $transforms List of rules or rulesets to be used by the Transliterator,
-	 *                             like `Lower`, `ASCII` or `a > b; c > d`
+	 * @param iterable<string> $transforms List of rules or rulesets to be used by the Transliterator,
+	 *                                     like `Lower`, `ASCII` or `a > b; c > d`
 	 *
 	 * @return static
 	 */
@@ -246,8 +250,8 @@ class SlugOptions implements \IteratorAggregate
 	/**
 	 * Add transforms before existing ones.
 	 *
-	 * @param iterable $transforms List of rules or rulesets to be used by the Transliterator,
-	 *                             like `Lower`, `ASCII` or `a > b; c > d`
+	 * @param iterable<string> $transforms List of rules or rulesets to be used by the Transliterator,
+	 *                                     like `Lower`, `ASCII` or `a > b; c > d`
 	 *
 	 * @return static
 	 */
@@ -268,8 +272,8 @@ class SlugOptions implements \IteratorAggregate
 	/**
 	 * Add transforms after existing ones.
 	 *
-	 * @param iterable $transforms List of rules or rulesets to be used by the Transliterator,
-	 *                             like `Lower`, `ASCII` or `a > b; c > d`
+	 * @param iterable<string> $transforms List of rules or rulesets to be used by the Transliterator,
+	 *                                     like `Lower`, `ASCII` or `a > b; c > d`
 	 *
 	 * @return static
 	 */
@@ -316,6 +320,8 @@ class SlugOptions implements \IteratorAggregate
 	}
 
 	/**
+	 * @phpstan-param mixed $transform
+	 *
 	 * @throws \InvalidArgumentException If it’s an invalid transform
 	 */
 	private function assertTransform($transform): void

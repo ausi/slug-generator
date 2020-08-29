@@ -24,9 +24,9 @@ class SlugGeneratorInterfaceTest extends TestCase
 	public function testInterfaceImplementation(): void
 	{
 		$this->assertSame('slug', (new class implements SlugGeneratorInterface {
-			public function generate(string $param1, iterable $param2 = []): string
+			public function generate(string $text, iterable $options = []): string
 			{
-				return $param1;
+				return $text;
 			}
 		})->generate('slug'));
 	}

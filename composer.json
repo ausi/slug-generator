@@ -18,9 +18,13 @@
         "lib-icu": ">=4.2.1"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.4",
         "contao/easy-coding-standard": "^1.0",
+        "phpstan/phpstan": "^0.12.40",
+        "phpstan/phpstan-phpunit": "^0.12.16",
         "phpunit/phpunit": "^7.5.20 | ^8.5.4",
+        "psalm/plugin-phpunit": "^0.9",
+        "slam/phpstan-extensions": "^5.0",
+        "vimeo/psalm": "^3.9",
         "php-coveralls/php-coveralls": "^2.0"
     },
     "autoload": {

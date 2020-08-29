@@ -23,7 +23,7 @@ interface SlugGeneratorInterface
 	/**
 	 * Generate a slug from the specified text.
 	 *
-	 * @param iterable $options SlugOptions object or options array
+	 * @param SlugOptions|iterable<string,mixed> $options
 	 */
 	public function generate(string $text, iterable $options = []): string;
 }

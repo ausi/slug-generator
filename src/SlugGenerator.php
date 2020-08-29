@@ -31,7 +31,7 @@ class SlugGenerator implements SlugGeneratorInterface
 	private $transliterators = [];
 
 	/**
-	 * @param iterable $options SlugOptions object or options array
+	 * @param SlugOptions|iterable<string,mixed> $options
 	 */
 	public function __construct(iterable $options = [])
 	{
@@ -62,6 +62,9 @@ class SlugGenerator implements SlugGeneratorInterface
 		}
 	}
 
+	/**
+	 * @param SlugOptions|iterable<string,mixed> $options
+	 */
 	public function generate(string $text, iterable $options = []): string
 	{
 		if (preg_match('//u', $text) !== 1) {
@@ -74,6 +77,7 @@ class SlugGenerator implements SlugGeneratorInterface
 			return '';
 		}
 
+		/* @phpstan-ignore-next-line */
 		$text = \Normalizer::normalize($text, \Normalizer::FORM_C);
 		$text = $this->removeIgnored($text, $options->getIgnoreChars());
 		$text = $this->transform($text, $options->getValidChars(), $options->getTransforms(), $options->getLocale());
@@ -116,6 +120,8 @@ class SlugGenerator implements SlugGeneratorInterface
 	/**
 	 * Apply all transforms with the specified locale
 	 * to the invalid parts of the text.
+	 *
+	 * @param iterable<string> $transforms
 	 */
 	private function transform(string $text, string $valid, iterable $transforms, string $locale): string
 	{
@@ -149,7 +155,7 @@ class SlugGenerator implements SlugGeneratorInterface
 
 		$insensitive = preg_replace_callback(
 			'(\\\\([pP])\{L([lu])\})s',
-			static function ($match) {
+			static function (array $match) {
 				return '\\'.$match[1].'{L'.($match[2] === 'l' ? 'u' : 'l').'}';
 			},
 			$insensitive
@@ -308,14 +314,14 @@ class SlugGenerator implements SlugGeneratorInterface
 	/**
 	 * Get all matching ranges.
 	 *
-	 * @return array Array of range arrays, each consisting of index and length
+	 * @return array<array<int>> Array of range arrays, each consisting of index and length
 	 */
 	private function getRanges(string $text, string $regex): array
 	{
 		preg_match_all($regex, $text, $matches, PREG_OFFSET_CAPTURE);
 
 		return array_map(
-			static function ($match) {
+			static function (array $match) {
 				return [$match[1], \strlen($match[0])];
 			},
 			$matches[0]
