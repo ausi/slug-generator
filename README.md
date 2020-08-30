@@ -55,8 +55,15 @@ Options are often very limited which makes it hard to customize for different us
 Some libs carry large rulesets with them that try to convert characters to ASCII,
 no one uses Unicode’s [CLDR][]
 which is the standard for transliteration rules and many other transforms.
+
 But most importantly no library was able to do the “correct” conversions,
-like “Ö-Äpfel” to “OE-Aepfel” for German or “İNATÇI” to “inatçı” for Turkish.
+like `Ö-Äpfel` to `OE-Aepfel` for German or `İNATÇI` to `inatçı` for Turkish.
+Because the CLDR transliteration rules are context sensitive
+they know how to correctly convert to `OE-Aepfel`
+instead of `Oe-Aepfel` or `OE-AEpfel`.
+CLDR also takes the language into account
+and knows that the turkish uppercase letter `I`
+has the lowercase form `ı` instead of `i`.
 
 Options
 -------
