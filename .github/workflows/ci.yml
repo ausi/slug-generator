@@ -138,6 +138,52 @@ jobs:
       - name: Run the unit tests
         run: vendor/bin/phpunit --colors=always
 
+  icu-lowest:
+    name: Lowest ICU version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.1
+          extensions: intl-50.2, mbstring, pcre
+          tools: prestissimo
+          coverage: none
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install the dependencies
+        run: |
+          composer remove --dev --no-update contao/* phpstan/* psalm/* slam/* vimeo/*
+          composer update --no-interaction --no-suggest
+
+      - name: Run the unit tests
+        run: vendor/bin/phpunit --colors=always
+
+  icu-highest:
+    name: Highest ICU version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.1
+          extensions: intl-67.1, mbstring, pcre
+          tools: prestissimo
+          coverage: none
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install the dependencies
+        run: |
+          composer remove --dev --no-update contao/* phpstan/* psalm/* slam/* vimeo/*
+          composer update --no-interaction --no-suggest
+
+      - name: Run the unit tests
+        run: vendor/bin/phpunit --colors=always
+
   windows:
     name: Windows
     runs-on: windows-latest
