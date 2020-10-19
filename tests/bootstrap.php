@@ -13,15 +13,6 @@ declare(strict_types=1);
 
 use Composer\Autoload\ClassLoader;
 
-/*
- * This file is part of the ausi/slug-generator package.
- *
- * (c) Martin Auswöger <martin@auswoeger.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 error_reporting(E_ALL);
 
 $include = /** @return ClassLoader|false */ function (string $file) {
