@@ -309,7 +309,7 @@ class SlugOptionsTest extends TestCase
 	}
 
 	/**
-	 * @psalm-suppress DeprecatedMethod
+	 * @psalm-suppress UndefinedMethod
 	 */
 	private function expectExceptionMatches(string $regularExpression): void
 	{
@@ -317,6 +317,7 @@ class SlugOptionsTest extends TestCase
 			$this->expectExceptionMessageMatches($regularExpression);
 		} else {
 			// PHPUnit 7 compat
+			/** @phpstan-ignore-next-line */
 			$this->expectExceptionMessageRegExp($regularExpression);
 		}
 	}

@@ -11,9 +11,20 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
+use Composer\Autoload\ClassLoader;
+
+/*
+ * This file is part of the ausi/slug-generator package.
+ *
+ * (c) Martin Auswöger <martin@auswoeger.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 error_reporting(E_ALL);
 
-$include = /** @return \Composer\Autoload\ClassLoader|false */ function (string $file) {
+$include = /** @return ClassLoader|false */ function (string $file) {
 	return file_exists($file) ? include $file : false;
 };
 

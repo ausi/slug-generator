@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+ * Support PHP 8.0. [#23]
  * Fix type issues found by PHPStan.
  * Update fallback transform rule sets from CLDR.
 
@@ -46,6 +47,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 [1.0.0-alpha2]: https://github.com/ausi/slug-generator/compare/v1.0.0-alpha1...v1.0.0-alpha2
 [1.0.0-alpha1]: https://github.com/ausi/slug-generator/commits/v1.0.0-alpha1
 
+[#23]: https://github.com/ausi/slug-generator/issues/23
 [#13]: https://github.com/ausi/slug-generator/issues/13
 [#11]: https://github.com/ausi/slug-generator/issues/11
 [#9]: https://github.com/ausi/slug-generator/issues/9

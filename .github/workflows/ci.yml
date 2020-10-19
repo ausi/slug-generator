@@ -71,7 +71,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [7.1, 7.2, 7.3, 7.4]
+        php: [7.1, 7.2, 7.3, 7.4, 8.0]
     steps:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -88,29 +88,6 @@ jobs:
         run: |
           composer remove --dev --no-update contao/* phpstan/* psalm/* slam/* vimeo/*
           composer install --no-interaction --no-suggest
-
-      - name: Run the unit tests
-        run: vendor/bin/phpunit --colors=always
-
-  php80:
-    name: PHP 8.0
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.0
-          extensions: intl, mbstring, pcre
-          tools: prestissimo
-          coverage: none
-
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Install the dependencies
-        run: |
-          composer remove --dev --no-update contao/* phpstan/* psalm/* slam/* vimeo/*
-          composer install --no-interaction --no-suggest --ignore-platform-reqs
 
       - name: Run the unit tests
         run: vendor/bin/phpunit --colors=always
