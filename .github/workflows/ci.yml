@@ -110,7 +110,7 @@ jobs:
       - name: Install the dependencies
         run: |
           composer remove --dev --no-update contao/* phpstan/* psalm/* slam/* vimeo/*
-          composer install --no-interaction --no-suggest --ignore-platform-reqs
+          composer install --no-interaction --no-suggest
 
       - name: Run the unit tests
         run: vendor/bin/phpunit --colors=always
