@@ -5,6 +5,7 @@ declare(strict_types=1);
 use PhpCsFixer\Fixer\Comment\HeaderCommentFixer;
 use PhpCsFixer\Fixer\ControlStructure\YodaStyleFixer;
 use PhpCsFixer\Fixer\Operator\NewWithBracesFixer;
+use PhpCsFixer\Fixer\PhpUnit\PhpUnitExpectationFixer;
 use SlevomatCodingStandard\Sniffs\Variables\UselessVariableSniff;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symplify\EasyCodingStandard\ValueObject\Option;
@@ -18,6 +19,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 	$parameters->set(Option::SKIP, [
 		NewWithBracesFixer::class => null,
 		UselessVariableSniff::class => null,
+		PhpUnitExpectationFixer::class => null,
 	]);
 
 	$services = $containerConfigurator->services();
