@@ -15,6 +15,7 @@ namespace Ausi\SlugGenerator\Tests;
 
 use Ausi\SlugGenerator\SlugGenerator;
 use Ausi\SlugGenerator\SlugGeneratorInterface;
+use Ausi\SlugGenerator\SlugOptions;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -267,11 +268,10 @@ class SlugGeneratorTest extends TestCase
 		$generator = new SlugGenerator;
 
 		$this->expectException(\InvalidArgumentException::class);
-		$this->expectExceptionMatches('("invalid rule".*"de_AT")');
+		$this->expectExceptionMatches('("invalid rule")');
 
 		$generator->generate('foö', [
 			'transforms' => ['invalid rule'],
-			'locale' => 'de_AT',
 		]);
 	}
 
@@ -285,12 +285,17 @@ class SlugGeneratorTest extends TestCase
 			$this->markTestSkipped();
 		}
 
-		$generator = new SlugGenerator;
-		$reflection = new \ReflectionClass(\get_class($generator));
-		$method = $reflection->getMethod('applyTransformRule');
-		$method->setAccessible(true);
-
-		$this->assertSame($expected, $method->invokeArgs($generator, $parameters));
+		$this->assertSame(
+			$expected,
+			(new SlugGenerator)->generate(
+				$parameters[0],
+				(new SlugOptions)
+					->setTransforms([$parameters[1]])
+					->setLocale($parameters[2])
+					->setValidChars($parameters[3])
+					->setIgnoreChars('')
+			)
+		);
 	}
 
 	/**
@@ -300,41 +305,41 @@ class SlugGeneratorTest extends TestCase
 	{
 		return [
 			[
-				['abc', 'Upper', '', '/b+/'],
+				['abc', 'Upper', '', 'A-Zac'],
 				'aBc',
 			],
 			[
-				['öbc', 'Upper', '', '/b+/'],
+				['öbc', 'Upper', '', 'A-Zöc'],
 				'öBc',
 			],
 			[
-				['💩bc', 'Upper', '', '/b+/'],
+				['💩bc', 'Upper', '', 'A-Zc💩'],
 				'💩Bc',
 			],
 			[
-				['iı', 'Upper', 'tr', '/.+/'],
+				['iı', 'Upper', 'tr', '\p{Lu}'],
 				'İI',
 				version_compare(INTL_ICU_VERSION, '51.2', '<'),
 			],
 			[
-				['iı', 'Upper', '', '/.+/'],
+				['iı', 'Upper', '', '\p{Lu}'],
 				'II',
 			],
 			[
-				['İI', 'Lower', 'tr_Latn_AT', '/.+/'],
+				['İI', 'Lower', 'tr_Latn_AT', '\p{Ll}'],
 				'iı',
 				version_compare(INTL_ICU_VERSION, '51.2', '<'),
 			],
 			[
-				['İI', 'Lower', '', '/.+/'],
+				['İI', 'Lower', '', '\P{Lu}'],
 				'i̇i',
 			],
 			[
-				['öß', 'ASCII', '', '/.+/'],
+				['öß', 'ASCII', '', 'a-z'],
 				'oss',
 			],
 			[
-				['öß', 'ASCII', 'de', '/.+/'],
+				['öß', 'ASCII', 'de', 'a-z'],
 				'oess',
 			],
 		];

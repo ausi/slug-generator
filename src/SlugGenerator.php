@@ -77,83 +77,180 @@ class SlugGenerator implements SlugGeneratorInterface
 			return '';
 		}
 
-		/** @var string $text */
-		$text = \Normalizer::normalize($text, \Normalizer::FORM_C);
-		$text = $this->removeIgnored($text, $options->getIgnoreChars());
-		$text = $this->transform($text, $options->getValidChars(), $options->getTransforms(), $options->getLocale());
-		$text = $this->removeIgnored($text, $options->getIgnoreChars());
+		$transliterator = $this->getTransliterator($options);
+		$transformed = $transliterator->transliterate($text);
 
-		return $this->replaceWithDelimiter($text, $options->getValidChars(), $options->getDelimiter());
+		if ($transformed === false) {
+			throw new \RuntimeException(sprintf('Failed to transliterate "%s": %s', $text, $transliterator->getErrorMessage() ?: ''));
+		}
+
+		return $transformed;
 	}
 
-	/**
-	 * Remove ignored characters from text.
-	 */
-	private function removeIgnored(string $text, string $ignore): string
+	private function getTransliterator(SlugOptions $options): \Transliterator
 	{
-		if ($ignore === '') {
-			return $text;
+		$rules = [
+			$this->buildTransformRules('NFC'),
+			$this->buildRemoveIgnoredRules($options->getIgnoreChars()),
+		];
+
+		foreach ($options->getTransforms() as $transform) {
+			$rules[] = $this->buildTransformRules($transform, $options->getValidChars(), $options->getLocale());
 		}
 
-		$replaced = preg_replace('(['.$ignore.'])us', '', $text);
+		$rules[] = $this->buildRemoveIgnoredRules($options->getIgnoreChars());
 
-		if ($replaced === null) {
-			throw new \RuntimeException(sprintf('Failed to replace "%s" in "%s".', '['.$ignore.']', $text));
-		}
+		$rules[] = $this->buildDelimiterRules($options->getValidChars(), $options->getDelimiter());
 
-		return $replaced;
-	}
+		$transliterator = \Transliterator::createFromRules(implode(';', array_merge(...$rules)).';');
 
-	/**
-	 * Replace all invalid characters with a delimiter
-	 * and strip the delimiter from the beginning and the end.
-	 */
-	private function replaceWithDelimiter(string $text, string $valid, string $delimiter): string
-	{
-		$quoted = preg_quote($delimiter);
-
-		// Replace all invalid characters with a single delimiter
-		$replaced = preg_replace(
-			'((?:[^'.$valid.']|'.$quoted.')+)us',
-			$delimiter,
-			$text
-		);
-
-		if ($replaced === null) {
-			throw new \RuntimeException(sprintf('Failed to replace "%s" with "%s" in "%s".', '(?:[^'.$valid.']|'.$quoted.')+', $delimiter, $text));
-		}
-
-		// Remove delimiters from the beginning and the end
-		$removed = preg_replace('(^(?:'.$quoted.')+|(?:'.$quoted.')+$)us', '', $replaced);
-
-		if ($removed === null) {
-			throw new \RuntimeException(sprintf('Failed to replace "%s" in "%s".', '^(?:'.$quoted.')+|(?:'.$quoted.')+$', $replaced));
-		}
-
-		return $removed;
-	}
-
-	/**
-	 * Apply all transforms with the specified locale
-	 * to the invalid parts of the text.
-	 *
-	 * @param iterable<string> $transforms
-	 */
-	private function transform(string $text, string $valid, iterable $transforms, string $locale): string
-	{
-		$regexRegular = '([^'.$valid.']+)us';
-		$regexCase = $this->createCaseRegex($valid);
-
-		foreach ($transforms as $transform) {
-			$regex = $transform === 'Lower' || $transform === 'Upper' ? $regexCase : $regexRegular;
-
-			if ($locale) {
-				$text = $this->applyTransformRule($text, $transform, $locale, $regex);
+		if ($transliterator === null) {
+			foreach ($options->getTransforms() as $transform) {
+				if (
+					\Transliterator::createFromRules(
+						implode(
+							';',
+							$this->buildTransformRules(
+								$transform,
+								$options->getValidChars(),
+								$options->getLocale()
+							)
+						).';'
+					) === null
+				) {
+					throw new \InvalidArgumentException(sprintf('Invalid transform rule "%s".', $transform));
+				}
 			}
-			$text = $this->applyTransformRule($text, $transform, '', $regex);
+
+			throw new \RuntimeException(sprintf('Failed to build transliterator: %s', implode(';', array_merge(...$rules)).';'));
 		}
 
-		return $text;
+		return $transliterator;
+	}
+
+	/**
+	 * @return array<string>
+	 */
+	private function buildTransformRules(string $rule, string $validChars = '', string $locale = ''): array
+	{
+		$rule = trim($rule);
+
+		if (!preg_match('(^[a-z0-9/_-]+$)i', $rule)) {
+			return [
+				// Skip valid chars by transforming them to themselves
+				'(['.$this->buildUnicodeSetFromRegex('(['.$validChars.'])us').']) > $1',
+				$rule,
+				// Start over at the beginning of the string after the rules are applied
+				':: Null',
+			];
+		}
+
+		$transformId = $this->findMatchingRule($rule, $locale);
+
+		$ruleset = $this->fixTransliteratorRule($transformId);
+
+		if ($ruleset !== null) {
+			/** @var array<array<string>> $ruleset */
+			$ruleset = array_map(
+				function ($rule) use ($validChars): array {
+					return $this->buildTransformRules($rule, $validChars);
+				},
+				$ruleset
+			);
+
+			return array_merge(...$ruleset);
+		}
+
+		$filter = '';
+
+		if ($validChars !== '') {
+			if ($transformId === 'Lower' || $transformId === 'Upper') {
+				$filter = '['.$this->buildUnicodeSetFromRegex($this->createCaseRegex($validChars)).'] ';
+			} else {
+				$filter = '[^'.$this->buildUnicodeSetFromRegex('(['.$validChars.'])us').'] ';
+			}
+		}
+
+		$rules = [':: '.$filter.$transformId];
+
+		if ($this->findMatchingRule($rule, '') !== $transformId) {
+			$rules = array_merge($rules, $this->buildTransformRules($rule, $validChars));
+		}
+
+		return $rules;
+	}
+
+	/**
+	 * @return array<string>
+	 */
+	private function buildRemoveIgnoredRules(string $ignoreChars): array
+	{
+		if ($ignoreChars === '') {
+			return [];
+		}
+
+		return [
+			'['.$this->buildUnicodeSetFromRegex('(['.$ignoreChars.'])us').'] > ',
+			':: Null',
+		];
+	}
+
+	/**
+	 * @return array<string>
+	 */
+	private function buildDelimiterRules(string $validChars, string $delimiter): array
+	{
+		$delimiter = $this->quoteString($delimiter);
+		$invalidSet = '[^'.$this->buildUnicodeSetFromRegex('(['.$validChars.'])us').']';
+
+		if ($delimiter !== '') {
+			$invalidSet = '['.$invalidSet.'{'.$delimiter.'}]';
+		}
+
+		return [
+			$invalidSet.' + > '.$delimiter,
+			':: Null',
+			'^ { '.$delimiter.' > ',
+			$delimiter.' } $ > ',
+			':: Null',
+		];
+	}
+
+	private function quoteUnicodeSet(string $charRange): string
+	{
+		return $this->quoteString($charRange);
+	}
+
+	/**
+	 * Escape every non-alphanumeric ASCII character with a backslash.
+	 */
+	private function quoteString(string $string): string
+	{
+		$quoted = preg_replace('([\x00-\x2F\x3A-\x40\x5B-\x60\x7B-\x7F])', '\\\\$0', $string);
+
+		if ($quoted === null) {
+			throw new \RuntimeException(sprintf('Unable to quote string "%s"', $string));
+		}
+
+		return $quoted;
+	}
+
+	private function buildUnicodeSetFromRegex(string $regex): string
+	{
+		static $cache = [];
+
+		if (!isset($cache[$regex])) {
+			$chars = [];
+
+			for ($i = 1; $i <= 1114111; ++$i) {
+				if (preg_match($regex, \IntlChar::chr($i)) === 1) {
+					$chars[] = \IntlChar::chr($i);
+				}
+			}
+			$cache[$regex] = $this->quoteUnicodeSet(implode('', $chars));
+		}
+
+		return $cache[$regex];
 	}
 
 	/**
@@ -181,86 +278,10 @@ class SlugGenerator implements SlugGeneratorInterface
 	}
 
 	/**
-	 * Apply a transform rule with the specified locale
-	 * to the parts that match the regular expression.
-	 */
-	private function applyTransformRule(string $text, string $rule, string $locale, string $regex): string
-	{
-		$transliterator = $this->getTransliterator($rule, $locale);
-		$newText = '';
-		$offset = 0;
-
-		foreach ($this->getRanges($text, $regex) as $range) {
-			$newText .= substr($text, $offset, $range[0] - $offset);
-			$newText .= $this->transformWithContext($transliterator, $text, $range[0], $range[1]);
-			$offset = $range[0] + $range[1];
-		}
-
-		$newText .= substr($text, $offset);
-
-		return $newText;
-	}
-
-	/**
-	 * Transform the text at the specified position
-	 * and use a one character context if possible.
-	 *
-	 * `Transliterator::transliterate()` doesn’t yet support context parameters
-	 * of the underlying ICU implementation.
-	 * Because of that, we add the context before the transform
-	 * and check afterwards that the context didn’t change.
-	 */
-	private function transformWithContext(\Transliterator $transliterator, string $text, int $index, int $length): string
-	{
-		$left = mb_substr(substr($text, 0, $index), -1, null, 'UTF-8');
-		$right = mb_substr(substr($text, $index + $length), 0, 1, 'UTF-8');
-
-		$leftLength = \strlen($left);
-		$rightLength = \strlen($right);
-
-		$text = substr($text, $index, $length);
-
-		$transformed = $transliterator->transliterate($left.$text.$right);
-
-		if ($transformed === false) {
-			throw new \RuntimeException(sprintf('Failed to transliterate "%s" with %s.', $left.$text.$right, $transliterator->id));
-		}
-
-		if (
-			(!$leftLength || strncmp($transformed, $left, $leftLength) === 0)
-			&& (!$rightLength || substr_compare($transformed, $right, -$rightLength) === 0)
-		) {
-			return substr($transformed, $leftLength, $rightLength ? -$rightLength : \strlen($transformed));
-		}
-
-		$transformed = $transliterator->transliterate($text);
-
-		if ($transformed === false) {
-			throw new \RuntimeException(sprintf('Failed to transliterate "%s" with %s.', $text, $transliterator->id));
-		}
-
-		return $transformed;
-	}
-
-	/**
-	 * Get the Transliterator for the specified transform rule and locale.
-	 */
-	private function getTransliterator(string $rule, string $locale): \Transliterator
-	{
-		$key = $rule.'|'.$locale;
-
-		if (!isset($this->transliterators[$key])) {
-			$this->transliterators[$key] = $this->findMatchingTransliterator($rule, $locale);
-		}
-
-		return $this->transliterators[$key];
-	}
-
-	/**
-	 * Find the best matching Transliterator
+	 * Find the best matching Transliterator rule
 	 * for the specified transform rule and locale.
 	 */
-	private function findMatchingTransliterator(string $rule, string $locale): \Transliterator
+	private function findMatchingRule(string $rule, string $locale): string
 	{
 		$candidates = [
 			'Latin-'.$rule,
@@ -280,14 +301,12 @@ class SlugGenerator implements SlugGeneratorInterface
 
 		try {
 			foreach ($candidates as $candidate) {
-				$candidate = $this->fixTransliteratorRule($candidate);
-
-				if ($transliterator = \Transliterator::create($candidate)) {
-					return $transliterator;
+				if (\in_array($candidate, \Transliterator::listIDs(), true) || $candidate === 'de-ASCII') {
+					return $candidate;
 				}
 
-				if ($transliterator = \Transliterator::createFromRules($candidate)) {
-					return $transliterator;
+				if (\Transliterator::create($candidate)) {
+					return $candidate;
 				}
 			}
 		} finally {
@@ -300,57 +319,31 @@ class SlugGenerator implements SlugGeneratorInterface
 
 	/**
 	 * Apply fixes to a transform rule for older versions of the Intl extension.
-	 */
-	private function fixTransliteratorRule(string $rule): string
-	{
-		static $latinAsciiFix;
-		static $deAsciiFix;
-
-		if ($latinAsciiFix === null) {
-			$latinAsciiFix = \in_array('Latin-ASCII', \Transliterator::listIDs(), true)
-				? false
-				: file_get_contents(__DIR__.'/Resources/Latin-ASCII.txt')
-			;
-		}
-
-		if ($deAsciiFix === null) {
-			$deAsciiFix = \in_array('de-ASCII', \Transliterator::listIDs(), true)
-				? false
-				: file_get_contents(__DIR__.'/Resources/de-ASCII.txt')
-			;
-
-			if ($latinAsciiFix && $deAsciiFix) {
-				$deAsciiFix = str_replace('::Latin-ASCII;', $latinAsciiFix, $deAsciiFix);
-			}
-		}
-
-		// Add the de-ASCII transform if a CLDR version lower than 32.0 is used.
-		if ($deAsciiFix && $rule === 'de-ASCII') {
-			return $deAsciiFix;
-		}
-
-		// Add the Latin-ASCII transform if a CLDR version lower than 1.9 is used.
-		if ($latinAsciiFix && $rule === 'Latin-ASCII') {
-			return $latinAsciiFix;
-		}
-
-		return $rule;
-	}
-
-	/**
-	 * Get all matching ranges.
 	 *
-	 * @return array<array<int>> Array of range arrays, each consisting of index and length
+	 * @return ?array<string>
 	 */
-	private function getRanges(string $text, string $regex): array
+	private function fixTransliteratorRule(string $rule): ?array
 	{
-		preg_match_all($regex, $text, $matches, PREG_OFFSET_CAPTURE);
+		if ($rule !== 'de-ASCII' || \in_array('de-ASCII', \Transliterator::listIDs(), true)) {
+			return null;
+		}
 
-		return array_map(
-			static function (array $match) {
-				return [$match[1], \strlen($match[0])];
-			},
-			$matches[0]
-		);
+		// https://github.com/unicode-org/cldr/blob/release-37/common/transforms/de-ASCII.xml
+		return [
+			implode('; ', [
+				'[ä {a \u0308}] > ae',
+				'[ö {o \u0308}] > oe',
+				'[ü {u \u0308}] > ue',
+
+				'[Ä {A \u0308}] } [:Lowercase:] > Ae',
+				'[Ö {O \u0308}] } [:Lowercase:] > Oe',
+				'[Ü {U \u0308}] } [:Lowercase:] > Ue',
+
+				'[Ä {A \u0308}] > AE',
+				'[Ö {O \u0308}] > OE',
+				'[Ü {U \u0308}] > UE',
+			]),
+			'Latin-ASCII',
+		];
 	}
 }
