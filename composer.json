@@ -15,7 +15,7 @@
         "ext-intl": "*",
         "ext-mbstring": "*",
         "ext-pcre": "*",
-        "lib-icu": ">=4.2.1"
+        "lib-icu": ">=4.6"
     },
     "require-dev": {
         "contao/easy-coding-standard": "^3.0",
