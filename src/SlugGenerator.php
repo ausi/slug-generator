@@ -77,7 +77,8 @@ class SlugGenerator implements SlugGeneratorInterface
 			return '';
 		}
 
-		$text = (string) \Normalizer::normalize($text, \Normalizer::FORM_C);
+		/** @var string $text */
+		$text = \Normalizer::normalize($text, \Normalizer::FORM_C);
 		$text = $this->removeIgnored($text, $options->getIgnoreChars());
 		$text = $this->transform($text, $options->getValidChars(), $options->getTransforms(), $options->getLocale());
 		$text = $this->removeIgnored($text, $options->getIgnoreChars());
