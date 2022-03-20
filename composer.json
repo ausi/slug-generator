@@ -55,5 +55,10 @@
         "unit-tests": [
             "vendor/bin/phpunit --colors=always"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }

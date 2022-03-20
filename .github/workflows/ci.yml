@@ -19,7 +19,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: 8.1
           extensions: intl, mbstring, pcre
           tools: prestissimo
           coverage: none
@@ -46,7 +46,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: 8.1
           extensions: intl, mbstring, pcre
           tools: prestissimo
           coverage: none
@@ -71,7 +71,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [7.1, 7.2, 7.3, 7.4, 8.0]
+        php: [7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
     steps:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -88,6 +88,29 @@ jobs:
         run: |
           composer remove --dev --no-update contao/* phpstan/* psalm/* slam/* vimeo/*
           composer install --no-interaction --no-suggest
+
+      - name: Run the unit tests
+        run: vendor/bin/phpunit --colors=always
+
+  php82:
+    name: PHP 8.2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: intl, mbstring, pcre
+          tools: prestissimo
+          coverage: none
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install the dependencies
+        run: |
+          composer remove --dev --no-update contao/* phpstan/* psalm/* slam/* vimeo/*
+          composer install --no-interaction --no-suggest --ignore-platform-req=php
 
       - name: Run the unit tests
         run: vendor/bin/phpunit --colors=always
@@ -164,11 +187,15 @@ jobs:
   windows:
     name: Windows
     runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [7.1, 7.2, 7.3, 7.4, 8.0, 8.1]
     steps:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: ${{ matrix.php }}
           extensions: intl, mbstring, pcre
           ini-values: memory_limit=1G
           tools: prestissimo
