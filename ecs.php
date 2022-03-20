@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use PhpCsFixer\Fixer\Comment\HeaderCommentFixer;
 use PhpCsFixer\Fixer\ControlStructure\YodaStyleFixer;
+use PhpCsFixer\Fixer\FunctionNotation\UseArrowFunctionsFixer;
 use PhpCsFixer\Fixer\Operator\NewWithBracesFixer;
 use PhpCsFixer\Fixer\PhpUnit\PhpUnitExpectationFixer;
 use SlevomatCodingStandard\Sniffs\Variables\UselessVariableSniff;
@@ -20,6 +21,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 		NewWithBracesFixer::class => null,
 		UselessVariableSniff::class => null,
 		PhpUnitExpectationFixer::class => null,
+		UseArrowFunctionsFixer::class,
 	]);
 
 	$services = $containerConfigurator->services();

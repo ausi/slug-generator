@@ -280,9 +280,7 @@ class SlugOptionsTest extends TestCase
 	{
 		$options = new SlugOptions(['transforms' => []]);
 
-		if ($expectedException) {
-			$this->expectException($expectedException);
-		}
+		$this->expectException($expectedException);
 
 		$this->assertSame([$transform], $options->addTransform($transform)->getTransforms());
 	}
