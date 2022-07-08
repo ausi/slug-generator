@@ -145,3 +145,8 @@ $generator->generate('©', ['preTransforms' => ['Name']]);           // Result: 
 [range syntax]: http://www.regular-expressions.info/charclass.html
 [Transform Rules]: http://userguide.icu-project.org/transforms/general
 [rule sets]: http://userguide.icu-project.org/transforms/general/rules
+
+Sponsors
+--------
+
+Thanks to [Blackfire](https://www.blackfire.io/) for sponsoring performance profiling tools for this project.
