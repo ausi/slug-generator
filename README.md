@@ -29,11 +29,11 @@ $generator->generate('富士山');         // Output: fu-shi-shan
 $generator->generate('國語');           // Output: guo-yu
 
 // Different valid character set, a specified locale and a delimiter
-$generator = new SlugGenerator((new SlugOptions)
+$generator = new SlugGenerator((new SlugOptions
     ->setValidChars('a-zA-Z0-9')
     ->setLocale('de')
     ->setDelimiter('_')
-);
+));
 $generator->generate('Äpfel und Bäume');  // Aepfel_und_Baeume
 ```
 
