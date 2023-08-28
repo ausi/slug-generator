@@ -77,7 +77,7 @@ class SlugGenerator implements SlugGeneratorInterface
 			return '';
 		}
 
-		/** @phpstan-ignore-next-line */
+		/** @var string $text */
 		$text = \Normalizer::normalize($text, \Normalizer::FORM_C);
 		$text = $this->removeIgnored($text, $options->getIgnoreChars());
 		$text = $this->transform($text, $options->getValidChars(), $options->getTransforms(), $options->getLocale());
