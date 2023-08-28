@@ -77,13 +77,19 @@ class SlugGenerator implements SlugGeneratorInterface
 			return '';
 		}
 
-		/** @var string $text */
+		/** @phpstan-ignore-next-line */
 		$text = \Normalizer::normalize($text, \Normalizer::FORM_C);
 		$text = $this->removeIgnored($text, $options->getIgnoreChars());
 		$text = $this->transform($text, $options->getValidChars(), $options->getTransforms(), $options->getLocale());
 		$text = $this->removeIgnored($text, $options->getIgnoreChars());
 
-		return $this->replaceWithDelimiter($text, $options->getValidChars(), $options->getDelimiter());
+        return $this->replaceWithDelimiter(
+            $text,
+            $options->getValidChars(),
+            $options->getDelimiter(),
+            $options->getKeepBeginningDelimiter(),
+            $options->getKeepEndDelimiter()
+        );
 	}
 
 	/**
@@ -108,7 +114,13 @@ class SlugGenerator implements SlugGeneratorInterface
 	 * Replace all invalid characters with a delimiter
 	 * and strip the delimiter from the beginning and the end.
 	 */
-	private function replaceWithDelimiter(string $text, string $valid, string $delimiter): string
+    private function replaceWithDelimiter(
+        string $text,
+        string $valid,
+        string $delimiter,
+        bool $keepBeginningDelimiter,
+        bool $keepEndDelimiter
+    ): string
 	{
 		$quoted = preg_quote($delimiter);
 
@@ -123,8 +135,14 @@ class SlugGenerator implements SlugGeneratorInterface
 			throw new \RuntimeException(sprintf('Failed to replace "%s" with "%s" in "%s".', '(?:[^'.$valid.']|'.$quoted.')+', $delimiter, $text));
 		}
 
-		// Remove delimiters from the beginning and the end
-		$removed = preg_replace('(^(?:'.$quoted.')+|(?:'.$quoted.')+$)us', '', $replaced);
+		// Remove delimiters from the beginning and the end if necesary
+        if ($keepBeginningDelimiter && $keepEndDelimiter) {
+            return $replaced;
+        }
+
+        $expresion = $this->getStripDelimiterRegex($quoted, $keepBeginningDelimiter, $keepEndDelimiter);
+
+		$removed = preg_replace($expresion, '', $replaced);
 
 		if ($removed === null) {
 			throw new \RuntimeException(sprintf('Failed to replace "%s" in "%s".', '^(?:'.$quoted.')+|(?:'.$quoted.')+$', $replaced));
@@ -353,4 +371,17 @@ class SlugGenerator implements SlugGeneratorInterface
 			$matches[0]
 		);
 	}
+
+    private function getStripDelimiterRegex(string $quotedDelimiter, bool $keepBeginningDelimiter, bool $keepEndDelimiter): string
+    {
+        if ($keepBeginningDelimiter && !$keepEndDelimiter) {
+            $expresion = '((?:'.$quotedDelimiter.')+$)us';
+        } else if(!$keepBeginningDelimiter && $keepEndDelimiter) {
+            $expresion = '(^(?:'.$quotedDelimiter.')+)us';
+        } else {
+            $expresion = '(^(?:'.$quotedDelimiter.')+|(?:'.$quotedDelimiter.')+$)us';
+        }
+
+        return $expresion;
+    }
 }

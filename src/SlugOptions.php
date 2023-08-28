@@ -60,6 +60,9 @@ class SlugOptions implements \IteratorAggregate
 	 */
 	private $setOptions = [];
 
+    private bool $keepBeginningDelimiter = false;
+    private bool $keepEndDelimiter = false;
+
 	/**
 	 * @param iterable<string,mixed> $options See the setter methods for available options
 	 */
@@ -287,6 +290,32 @@ class SlugOptions implements \IteratorAggregate
 		return $this;
 	}
 
+    public function setKeepBeginningDelimiter(bool $keepBeginingDelimiter): self
+    {
+        $this->keepBeginningDelimiter = $keepBeginingDelimiter;
+        $this->setOptions['keepBeginningDelimiter'] = null;
+
+        return $this;
+    }
+
+    public function getKeepBeginningDelimiter(): bool
+    {
+        return $this->keepBeginningDelimiter;
+    }
+
+    public function setKeepEndDelimiter(bool $keepEndDelimiter): self
+    {
+        $this->keepEndDelimiter = $keepEndDelimiter;
+        $this->setOptions['keepEndDelimiter'] = null;
+
+        return $this;
+    }
+
+    public function getKeepEndDelimiter(): bool
+    {
+        return $this->keepEndDelimiter;
+    }
+
 	/**
 	 * @throws \InvalidArgumentException If it’s an invalid option name
 	 */
@@ -300,6 +329,8 @@ class SlugOptions implements \IteratorAggregate
 			'transforms',
 			'preTransforms',
 			'postTransforms',
+            'keepBeginningDelimiter',
+            'keepEndDelimiter',
 		];
 
 		if (!\in_array($option, $validOptions, true)) {

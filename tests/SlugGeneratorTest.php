@@ -249,6 +249,54 @@ class SlugGeneratorTest extends TestCase
 					'preTransforms' => ['ö > OOOO'],
 				],
 			],
+            [
+                '_sugiartoss_',
+                'sugiartoss-',
+                [
+                    'keepEndDelimiter' => true
+                ]
+            ],
+            [
+                '_sugiartoss_',
+                '-sugiartoss',
+                [
+                    'keepBeginningDelimiter' => true
+                ]
+            ],
+            [
+                '_sugiartoss_',
+                '-sugiartoss-',
+                [
+                    'keepBeginningDelimiter' => true,
+                    'keepEndDelimiter' => true
+                ]
+            ],
+            [
+                '-sugiartoss-',
+                'sugiartoss-',
+                [
+                    'keepEndDelimiter' => true
+                ]
+            ],
+            [
+                '-sugiartoss-',
+                '-sugiartoss',
+                [
+                    'keepBeginningDelimiter' => true
+                ]
+            ],
+            [
+                '-sugiartoss-',
+                '-sugiartoss-',
+                [
+                    'keepBeginningDelimiter' => true,
+                    'keepEndDelimiter' => true
+                ]
+            ],
+            [
+                '-sugiartoss-',
+                'sugiartoss',
+            ],
 		];
 	}
 

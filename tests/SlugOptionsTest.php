@@ -280,7 +280,9 @@ class SlugOptionsTest extends TestCase
 	{
 		$options = new SlugOptions(['transforms' => []]);
 
-		$this->expectException($expectedException);
+		if ($expectedException) {
+			$this->expectException($expectedException);
+		}
 
 		$this->assertSame([$transform], $options->addTransform($transform)->getTransforms());
 	}
@@ -318,5 +320,20 @@ class SlugOptionsTest extends TestCase
 			/** @phpstan-ignore-next-line */
 			$this->expectExceptionMessageRegExp($regularExpression);
 		}
+	}
+
+    public function testSetKeepDelimiter(): void
+	{
+		$options = new SlugOptions;
+		$this->assertFalse($options->getKeepBeginningDelimiter());
+		$this->assertFalse($options->getKeepEndDelimiter());
+		$this->assertTrue($options->setKeepBeginningDelimiter(true)->getKeepBeginningDelimiter());
+		$this->assertTrue($options->setKeepEndDelimiter(true)->getKeepEndDelimiter());
+
+		$options = new SlugOptions(['keepBeginningDelimiter' => true, 'keepEndDelimiter' => true]);
+        $this->assertTrue($options->getKeepBeginningDelimiter());
+		$this->assertTrue($options->getKeepEndDelimiter());
+		$this->assertFalse($options->setKeepBeginningDelimiter(false)->getKeepBeginningDelimiter());
+		$this->assertFalse($options->setKeepEndDelimiter(false)->getKeepEndDelimiter());
 	}
 }
