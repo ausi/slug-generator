@@ -35,11 +35,13 @@ class SlugOptionsTest extends TestCase
 		$this->assertSame('x', $options->getDelimiter());
 		$this->assertSame('a-z0-9', $options->getValidChars());
 
-		$options2 = $options->merge(new SlugOptions(['validChars' => 'x']));
+		$options2 = $options->merge(new SlugOptions(['validChars' => 'x', 'trimDelimiter' => false]));
 		$this->assertSame('x', $options->getDelimiter());
 		$this->assertSame('a-z0-9', $options->getValidChars());
+		$this->assertTrue($options->getTrimDelimiter());
 		$this->assertSame('x', $options2->getDelimiter());
 		$this->assertSame('x', $options2->getValidChars());
+		$this->assertFalse($options2->getTrimDelimiter());
 	}
 
 	public function testGetIterator(): void
@@ -67,6 +69,16 @@ class SlugOptionsTest extends TestCase
 		$this->assertSame('', $options->setDelimiter('')->getDelimiter());
 		$this->assertSame('x', $options->setDelimiter('x')->getDelimiter());
 		$this->assertSame('xx', $options->setDelimiter('xx')->getDelimiter());
+	}
+
+	public function testSetTrimDelimiter(): void
+	{
+		$options = new SlugOptions;
+		$this->assertTrue($options->getTrimDelimiter());
+
+		$options = new SlugOptions(['trimDelimiter' => false]);
+		$this->assertFalse($options->getTrimDelimiter());
+		$this->assertTrue($options->setTrimDelimiter(true)->getTrimDelimiter());
 	}
 
 	public function testSetValidChars(): void

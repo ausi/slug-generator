@@ -83,6 +83,16 @@ $generator->generate('Hello World!', ['delimiter' => '_']);   // Result: hello_w
 $generator->generate('Hello World!', ['delimiter' => '%20']); // Result: hello%20world
 ```
 
+### `trimDelimiter`, default `true`
+
+If set to `true` the delimiter will be stripped
+from the beginning and the end of the slug.
+
+```php
+$generator->generate('Hello World!');                             // Result: hello-world
+$generator->generate('Hello World!', ['trimDelimiter' => false]); // Result: hello-world-
+```
+
 ### `validChars`, default `"a-z0-9"`
 
 Valid characters that are allowed in the slug.

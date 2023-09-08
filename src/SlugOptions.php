@@ -28,6 +28,11 @@ class SlugOptions implements \IteratorAggregate
 	private $delimiter = '-';
 
 	/**
+	 * @var bool
+	 */
+	private $trimDelimiter = true;
+
+	/**
 	 * @var string
 	 */
 	private $validChars = 'a-z0-9';
@@ -124,6 +129,24 @@ class SlugOptions implements \IteratorAggregate
 	public function getDelimiter(): string
 	{
 		return $this->delimiter;
+	}
+
+	/**
+	 * @param bool $trimDelimiter True if the delimiter should be trimmed from the beginning and end of the slug
+	 *
+	 * @return static
+	 */
+	public function setTrimDelimiter(bool $trimDelimiter): self
+	{
+		$this->trimDelimiter = $trimDelimiter;
+		$this->setOptions['trimDelimiter'] = null;
+
+		return $this;
+	}
+
+	public function getTrimDelimiter(): bool
+	{
+		return $this->trimDelimiter;
 	}
 
 	/**
@@ -294,6 +317,7 @@ class SlugOptions implements \IteratorAggregate
 	{
 		static $validOptions = [
 			'delimiter',
+			'trimDelimiter',
 			'validChars',
 			'ignoreChars',
 			'locale',
