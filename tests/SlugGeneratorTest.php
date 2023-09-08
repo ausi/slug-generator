@@ -242,6 +242,21 @@ class SlugGeneratorTest extends TestCase
 				['validChars' => ''],
 			],
 			[
+				'-A B C-',
+				'-',
+				['validChars' => '-', 'trimDelimiter' => false],
+			],
+			[
+				'-A B C-',
+				'-a-b-c-',
+				['validChars' => 'a-z', 'trimDelimiter' => false],
+			],
+			[
+				'- -A B C- -',
+				'...a...b...c...',
+				['validChars' => 'a-z', 'delimiter' => '...', 'trimDelimiter' => false],
+			],
+			[
 				'contextöcontextöcontext',
 				'CONTEXTöCONTEXTöCONTEXT',
 				[

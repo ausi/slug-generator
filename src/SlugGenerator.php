@@ -74,7 +74,7 @@ class SlugGenerator implements SlugGeneratorInterface
 		$options = $this->options->merge($options);
 
 		if ($options->getValidChars() === '') {
-			return '';
+			return $options->getTrimDelimiter() || $text === '' ? '' : $options->getDelimiter();
 		}
 
 		/** @var string $text */
@@ -83,7 +83,12 @@ class SlugGenerator implements SlugGeneratorInterface
 		$text = $this->transform($text, $options->getValidChars(), $options->getTransforms(), $options->getLocale());
 		$text = $this->removeIgnored($text, $options->getIgnoreChars());
 
-		return $this->replaceWithDelimiter($text, $options->getValidChars(), $options->getDelimiter());
+		return $this->replaceWithDelimiter(
+			$text,
+			$options->getValidChars(),
+			$options->getDelimiter(),
+			$options->getTrimDelimiter()
+		);
 	}
 
 	/**
@@ -108,7 +113,7 @@ class SlugGenerator implements SlugGeneratorInterface
 	 * Replace all invalid characters with a delimiter
 	 * and strip the delimiter from the beginning and the end.
 	 */
-	private function replaceWithDelimiter(string $text, string $valid, string $delimiter): string
+	private function replaceWithDelimiter(string $text, string $valid, string $delimiter, bool $trimDelimiter): string
 	{
 		$quoted = preg_quote($delimiter);
 
@@ -121,6 +126,10 @@ class SlugGenerator implements SlugGeneratorInterface
 
 		if ($replaced === null) {
 			throw new \RuntimeException(sprintf('Failed to replace "%s" with "%s" in "%s".', '(?:[^'.$valid.']|'.$quoted.')+', $delimiter, $text));
+		}
+
+		if (!$trimDelimiter) {
+			return $replaced;
 		}
 
 		// Remove delimiters from the beginning and the end
